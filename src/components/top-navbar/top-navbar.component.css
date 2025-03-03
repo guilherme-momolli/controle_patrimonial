@@ -1,0 +1,68 @@
+/* Navbar principal */
+.navbar {
+  background-color: #001aff;
+  padding: 10px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Links da navbar */
+.nav-links {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+}
+
+.nav-links li {
+  margin-right: 20px;
+}
+
+/* Estilização do botão do usuário */
+.user-menu {
+  position: relative;
+}
+
+.user-button {
+  background: none;
+  border: none;
+  color: rgb(255, 0, 0);
+  cursor: pointer;
+  font-size: 20px;
+}
+
+/* Ícone do usuário */
+.user-button i {
+  font-size: 24px;
+}
+
+/* Dropdown de usuário */
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+  padding: 10px 0;
+}
+
+.dropdown-menu li {
+  padding: 10px;
+}
+
+.dropdown-menu li a {
+  text-decoration: none;
+  color: black;
+  display: block;
+  padding: 8px 15px;
+}
+
+.dropdown-menu li a:hover {
+  background: #f0f0f0;
+}

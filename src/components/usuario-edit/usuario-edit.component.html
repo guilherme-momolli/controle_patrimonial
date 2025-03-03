@@ -1,0 +1,23 @@
+<div class="container">
+    <h2>Editar Usuário</h2>
+    <form (ngSubmit)="salvarEdicao()">
+      <div>
+        <label for="nome">Nome:</label>
+        <input id="nome" [(ngModel)]="usuario.nome" name="nome" required />
+      </div>
+  
+      <div>
+        <label for="email">Email:</label>
+        <input id="email" [(ngModel)]="usuario.email" name="email" required />
+      </div>
+
+      <div>
+        <label for="senha">Nova senha:</label>
+        <input id="senha" type=password [(ngModel)]="usuario.senha" name="senha" required />
+      </div>
+  
+      <button type="submit">Salvar</button>
+      <button type="button" (click)="router.navigate(['/usuario_list'])">Cancelar</button>
+    </form>
+  </div>
+  

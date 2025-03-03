@@ -28,13 +28,18 @@ export class LoginComponent {
   onSubmit() {
     if (this.loginForm.valid) {
       const { email, senha } = this.loginForm.value;
-      
-      this.authService.login({ email, senha}).subscribe({
+  
+      this.authService.login({ email, senha }).subscribe({
         next: (response) => {
-          localStorage.setItem('token', response.token);
-          this.router.navigate(['/dashboard']); 
+          if (response?.token) {
+            this.authService.setToken(response.token);
+            console.log(this.authService.getToken);
+            this.router.navigate(['/main']);
+          } else {
+            this.errorMessage = 'Erro ao fazer login, tente novamente!';
+          }
         },
-        error: (error) => {
+        error: () => {
           this.errorMessage = 'Email ou senha inválidos!';
         }
       });

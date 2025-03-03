@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ApiService } from '../../core/services/api/api.service';
 import {Router, RouterModule } from '@angular/router';
+import { UsuarioService } from '../../core/services/usuario/usuario.service';
 
 
 @Component({
@@ -18,7 +18,7 @@ export class UserFormComponent {
   successMessage: string | null = null;
   errorMessage: string | null = null;
 
-  constructor(private fb: FormBuilder, private apiService: ApiService, private router: Router) {
+  constructor(private fb: FormBuilder, private usuarioService: UsuarioService, private router: Router) {
     this.userForm = this.fb.group({
       nome: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -38,10 +38,11 @@ export class UserFormComponent {
     this.successMessage = null;
     this.errorMessage = null;
 
-    this.apiService.createUsuario(this.userForm.value).subscribe({
+    this.usuarioService.createUsuario(this.userForm.value).subscribe({
       next: () => {
         this.successMessage = 'Usuário cadastrado com sucesso!';
         this.userForm.reset();
+        this.router.navigate(['/login']);
       },
       error: () => {
         this.errorMessage = 'Erro ao cadastrar usuário!';
