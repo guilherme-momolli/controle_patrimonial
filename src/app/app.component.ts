@@ -18,7 +18,6 @@ export class AppComponent implements OnInit{
     if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
       document.body.classList.toggle('dark-mode');
 
-      // Salvar no localStorage apenas no navegador
       if (document.body.classList.contains('dark-mode')) {
         localStorage.setItem('darkMode', 'enabled');
       } else {
@@ -28,7 +27,6 @@ export class AppComponent implements OnInit{
   }
 
   ngOnInit() {
-    // Apenas executa no navegador
     if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
       if (localStorage.getItem('darkMode') === 'enabled') {
         document.body.classList.add('dark-mode');

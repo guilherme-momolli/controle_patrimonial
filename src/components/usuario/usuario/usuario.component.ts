@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { User, UsuarioService } from '../../core/services/usuario/usuario.service';
+import { User, UsuarioService } from '../../../core/services/usuario/usuario.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 
@@ -44,6 +44,6 @@ export class UsuarioComponent {
   }
 
    editarUsuario(id: number): void {
-     this.router.navigate(['usuario/edit/:', id]);
+     this.router.navigate(['usuario_edit/', id]);
    }
 }

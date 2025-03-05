@@ -1,0 +1,78 @@
+<div class="form-container">
+    <h2>Cadastro de Hardware</h2>
+  
+    <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  
+    <form [formGroup]="hardwareForm" (ngSubmit)="submitForm()">
+      <fieldset>
+        <legend>Dados do Hardware</legend>
+  
+        <div class="form-group">
+          <label for="codigoPatrimonial">Código Patrimonial</label>
+          <input id="codigoPatrimonial" formControlName="codigoPatrimonial" type="text">
+        </div>
+  
+        <div class="form-group">
+          <label for="componente">Componente</label>
+          <select id="componente" formControlName="componente">
+            <option *ngFor="let item of componentes" [value]="item">{{ item }}</option>
+          </select>
+          <p class="error" *ngIf="hardwareForm.get('componente')?.invalid && hardwareForm.get('componente')?.touched">
+            Componente é obrigatório.
+          </p>
+        </div>
+  
+        <div class="form-group">
+          <label for="numeroSerial">Número Serial</label>
+          <input id="numeroSerial" formControlName="numeroSerial" type="text">
+        </div>
+  
+        <div class="form-group">
+          <label for="modelo">Modelo</label>
+          <input id="modelo" formControlName="modelo" type="text">
+          <p class="error" *ngIf="hardwareForm.get('modelo')?.invalid && hardwareForm.get('modelo')?.touched">
+            Modelo é obrigatório.
+          </p>
+        </div>
+  
+        <div class="form-group">
+          <label for="fabricante">Fabricante</label>
+          <input id="fabricante" formControlName="fabricante" type="text">
+          <p class="error" *ngIf="hardwareForm.get('fabricante')?.invalid && hardwareForm.get('fabricante')?.touched">
+            Fabricante é obrigatório.
+          </p>
+        </div>
+  
+        <div class="form-group">
+          <label for="velocidade">Velocidade</label>
+          <input id="velocidade" formControlName="velocidade" type="text">
+        </div>
+  
+        <div class="form-group">
+          <label for="capacidadeArmazenamento">Capacidade de Armazenamento</label>
+          <input id="capacidadeArmazenamento" formControlName="capacidadeArmazenamento" type="text">
+        </div>
+  
+        <div class="form-group">
+          <label for="precoTotal">Preço Total</label>
+          <input id="precoTotal" formControlName="precoTotal" type="number">
+          <p class="error" *ngIf="hardwareForm.get('precoTotal')?.invalid && hardwareForm.get('precoTotal')?.touched">
+            Preço é obrigatório.
+          </p>
+        </div>
+  
+        <div class="form-group">
+          <label for="estatus">Status</label>
+          <select id="estatus" formControlName="estatus">
+            <option *ngFor="let status of estatusList" [value]="status">{{ status }}</option>
+          </select>
+          <p class="error" *ngIf="hardwareForm.get('estatus')?.invalid && hardwareForm.get('estatus')?.touched">
+            Status é obrigatório.
+          </p>
+        </div>
+  
+        <button type="submit" [disabled]="isSubmitting || hardwareForm.invalid">Cadastrar</button>
+      </fieldset>
+    </form>
+  </div>

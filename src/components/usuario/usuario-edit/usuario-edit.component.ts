@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
-import { UsuarioService } from '../../core/services/usuario/usuario.service';
+import { UsuarioService } from '../../../core/services/usuario/usuario.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 

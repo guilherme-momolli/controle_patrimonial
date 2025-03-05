@@ -1,0 +1,34 @@
+<table>
+    <thead>
+      <tr>
+        <th>Código Patrimonial</th>
+        <th>Gabinete</th>
+        <th>Fonte de alimentação</th>
+        <th>Placa mãe</th>
+        <th>Placa de vídeo</th>
+        <th>Placa Wi-Fi</th>
+        <th>Processador</th>
+        <th>Cooler</th>
+        <th>Preço total</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let codigo of getCodigosPatrimoniais()">
+        <td>{{ codigo }}</td>
+        <td>{{ getComponenteNome(hardwaresAgrupados[codigo], 'GABINETE') }}</td>
+        <td>{{ getComponenteNome(hardwaresAgrupados[codigo], 'FONTE_ALIMENTACAO') }}</td>
+        <td>{{ getComponenteNome(hardwaresAgrupados[codigo], 'PLACA_MAE') }}</td>
+        <td>{{ getComponenteNome(hardwaresAgrupados[codigo], 'PLACA_VIDEO') }}</td>
+        <td>{{ getComponenteNome(hardwaresAgrupados[codigo], 'PLACA_WIFI') }}</td>
+        <td>{{ getComponenteNome(hardwaresAgrupados[codigo], 'PROCESSADOR') }}</td>
+        <td>{{ getComponenteNome(hardwaresAgrupados[codigo], 'COOLER') }}</td>
+        <td>R$ {{ getTotalPreco(hardwaresAgrupados[codigo]) }}</td>
+        <td>
+          <button (click)="editarHardware(codigo)">✏️ Editar</button>
+          <button (click)="deletarHardware(codigo)">🗑️ Deletar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  

@@ -1,0 +1,40 @@
+<table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Código Patrimonial</th>
+        <th>Componente</th>
+        <th>Número Serial</th>
+        <th>Modelo</th>
+        <th>Fabriacante</th>
+        <th>Velocidade</th>
+        <th>Capacidade de Armazenamento</th>
+        <th>Preço total</th>
+        <th>Estatus</th>
+        <!-- <th>Data de Fabricação</th> -->
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let hardware of hardwares">
+        <td>{{ hardware.id}}</td>
+        <td>{{ hardware.codigoPatrimonial}}</td>
+        <td>{{ hardware.componente}}</td>
+        <td>{{ hardware.numeroSerial}}</td>
+        <td>{{ hardware.modelo}}</td>
+        <td>{{ hardware.fabricante}}</td>
+        <td>{{ hardware.velocidade}} GHz</td>
+        <td>{{ hardware.capacidadeArmazenamento}} Gigabytes</td>
+        <td>R$ {{ hardware.precoTotal}}</td>
+        <td>{{ hardware.estatus}}</td>
+        <!-- <td>{{hardware.dataFabricacao}}</td> -->
+        <!-- <td>{{ hardware.notaFiscal }}</td> -->
+
+        <td>
+          <button (click)="editarHardware(hardware.id)">✏️ Editar</button>
+          <button (click)="deletarHardware(hardware.id)">🗑️ Deletar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  

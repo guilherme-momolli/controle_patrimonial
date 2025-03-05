@@ -1,2 +1,22 @@
-<app-top-navbar></app-top-navbar>
-<p>VOCE NAO DEVERIA ESTAR AQUI!</p>
+<div class="main-container">
+    <header>
+      <h1>Controle Patrimonial</h1>
+      <nav>
+        <ul>
+            <li><button (click)="navigateTo('/hardware_create')">Cadastrar Hardware</button></li>
+            <li><button (click)="navigateTo('/hardware_list')">Listar Hardwares</button></li>
+            <li><button (click)="navigateTo('/usuario_list')">Usuários</button></li>
+          </ul>
+      </nav>
+    </header>
+    
+    <section class="dashboard">
+      <h2>Bem-vindo ao Sistema de Controle Patrimonial</h2>
+      <p>Gerencie seus equipamentos e mantenha o controle de patrimônio de forma eficiente.</p>
+      <div class="quick-links">
+        <button (click)="navigateTo('/hardware_create')" routerLinkActive="active" class="card">+ Cadastrar Novo Hardware</button>
+        <a routerLink="/hardware_list" routerLinkActive="active" class="card">📋 Ver Lista de Hardwares</a>
+        <a routerLink="/usuario_list" routerLinkActive="active" class="card">👥 Gerenciar Usuários</a>
+      </div>
+    </section>
+  </div>
