@@ -34,8 +34,11 @@ export class HardwareCadastroComponent {
       precoTotal: ['', Validators.required],
       estatus: ['', Validators.required]
       // dataFabricacao: ['', Validators.required],
-    }
-  );
+    });
+  }
+
+  navigateTo(route: string) {
+    this.router.navigate([route]);
   }
     
   submitForm() {
@@ -51,7 +54,6 @@ export class HardwareCadastroComponent {
       next: () => {
         this.successMessage = 'Usuário cadastrado com sucesso!';
         this.hardwareForm.reset();
-        this.router.navigate(['/hardware_list']);
       },
       error: () => {
         this.errorMessage = 'Erro ao cadastrar hardware!';

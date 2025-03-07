@@ -1,1 +1,25 @@
 /* You can add global styles to this file, and also import other style files */
+/*@import './app/app.component.css';*/
+body.dark-mode {
+    background-color: #121212;
+    color: white;
+  }
+  
+  .dark-mode .navbar {
+    background-color: #1e1e1e !important;
+  }
+  
+  .dark-mode .card {
+    background-color: #222;
+    color: white;
+  }
+  
+  .dark-mode .btn-outline-light {
+    border-color: white;
+    color: white;
+  }
+  
+  .dark-mode .btn-outline-light:hover {
+    background-color: white;
+    color: black;
+  }

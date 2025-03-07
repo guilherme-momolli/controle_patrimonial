@@ -1,5 +1,4 @@
-/* Estiliza o container principal */
-.hardware-list-container {
+/* .hardware-list-container {
   width: 100%;
   max-width: 1200px;
   margin: 20px auto;
@@ -9,7 +8,6 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Estiliza a tabela */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -18,7 +16,6 @@ table {
   overflow: hidden;
 }
 
-/* Cabeçalho da tabela */
 thead {
   background: #007BFF;
   color: white;
@@ -30,17 +27,14 @@ th, td {
   border-bottom: 1px solid #ddd;
 }
 
-/* Linhas alternadas para melhor legibilidade */
 tbody tr:nth-child(even) {
   background: #f2f2f2;
 }
 
-/* Ajustes para as colunas de ações */
 td:last-child {
   text-align: center;
 }
 
-/* Botões de ação */
 button {
   padding: 8px 12px;
   margin: 4px;
@@ -64,7 +58,6 @@ button:last-child {
   color: white;
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
   th, td {
     padding: 8px;
@@ -75,4 +68,4 @@ button:last-child {
     font-size: 12px;
     padding: 6px 10px;
   }
-}
+} */

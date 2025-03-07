@@ -1,23 +1,45 @@
-<div class="container">
-    <h2>Editar Usuário</h2>
-    <form (ngSubmit)="salvarEdicao()">
-      <div>
-        <label for="nome">Nome:</label>
-        <input id="nome" [(ngModel)]="usuario.nome" name="nome" required />
-      </div>
-  
-      <div>
-        <label for="email">Email:</label>
-        <input id="email" [(ngModel)]="usuario.email" name="email" required />
-      </div>
+<div class="container mt-4">
+  <h2 class="mb-3 text-primary text-center">Editar Usuário</h2>
 
-      <div>
-        <label for="senha">Nova senha:</label>
-        <input id="senha" type=password [(ngModel)]="usuario.senha" name="senha" required />
-      </div>
-  
-      <button type="submit">Salvar</button>
-      <button type="button" (click)="router.navigate(['/usuario_list'])">Cancelar</button>
-    </form>
-  </div>
-  
+  <form (ngSubmit)="salvarEdicao()" class="card p-4 shadow">
+    <div class="mb-3">
+      <label for="nome" class="form-label">Nome</label>
+      <input 
+        id="nome" 
+        [(ngModel)]="usuario.nome" 
+        name="nome" 
+        class="form-control" 
+        required 
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="email" class="form-label">E-mail</label>
+      <input 
+        id="email" 
+        [(ngModel)]="usuario.email" 
+        name="email" 
+        class="form-control" 
+        type="email" 
+        required 
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="senha" class="form-label">Nova Senha</label>
+      <input 
+        id="senha" 
+        [(ngModel)]="usuario.senha" 
+        name="senha" 
+        class="form-control" 
+        type="password" 
+        required 
+      />
+    </div>
+
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+      <button type="submit" class="btn btn-primary">Salvar</button>
+      <button type="button" class="btn btn-secondary" (click)="router.navigate(['/usuario_list'])">Cancelar</button>
+    </div>
+  </form>
+</div>

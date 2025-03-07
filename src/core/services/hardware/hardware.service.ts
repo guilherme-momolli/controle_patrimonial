@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Timestamp } from 'rxjs';
+import { catchError, Observable, of, tap, Timestamp } from 'rxjs';
 
 export interface Hardware {
   id: number;
@@ -39,10 +39,12 @@ export class HardwareService {
 
   getHardwaresAgrupados(): Observable<{ [codigoPatrimonial: string]: Hardware[] }> {
     return this.http.get<{ [codigoPatrimonial: string]: Hardware[] }>(`${this.apiUrl}/list/agrupado`);
+      
   }
+  
 
-  createHardware(userData: any): Observable<any> {
-      return this.http.post(`${this.apiUrl}/create`, userData);
+  createHardware(hardwareData: any): Observable<any> {
+      return this.http.post(`${this.apiUrl}/create`, hardwareData);
   }
 
   updateHardware(hardware: any): Observable<any> {

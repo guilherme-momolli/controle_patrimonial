@@ -1,22 +1,49 @@
-<div class="main-container">
-    <header>
-      <h1>Controle Patrimonial</h1>
-      <nav>
-        <ul>
-            <li><button (click)="navigateTo('/hardware_create')">Cadastrar Hardware</button></li>
-            <li><button (click)="navigateTo('/hardware_list')">Listar Hardwares</button></li>
-            <li><button (click)="navigateTo('/usuario_list')">Usuários</button></li>
-          </ul>
-      </nav>
-    </header>
-    
-    <section class="dashboard">
-      <h2>Bem-vindo ao Sistema de Controle Patrimonial</h2>
-      <p>Gerencie seus equipamentos e mantenha o controle de patrimônio de forma eficiente.</p>
-      <div class="quick-links">
-        <button (click)="navigateTo('/hardware_create')" routerLinkActive="active" class="card">+ Cadastrar Novo Hardware</button>
-        <a routerLink="/hardware_list" routerLinkActive="active" class="card">📋 Ver Lista de Hardwares</a>
-        <a routerLink="/usuario_list" routerLinkActive="active" class="card">👥 Gerenciar Usuários</a>
+<div class="container mt-4">
+  <header class="d-flex justify-content-between align-items-center p-3 bg-primary text-white rounded">
+    <h1 class="h3">Controle Patrimonial</h1>
+    <nav>
+      <ul class="nav">
+        <li class="nav-item">
+          <button class="btn btn-light me-2" (click)="navigateTo('/hardware_create')">
+            Cadastrar Hardware
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="btn btn-light me-2" (click)="navigateTo('/hardware_list')">
+            Listar Hardwares
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="btn btn-light" (click)="navigateTo('/usuario_list')">
+            Usuários
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="mt-4 text-center">
+    <h2 class="text-primary">Bem-vindo ao Sistema de Controle Patrimonial</h2>
+    <p class="text-muted">
+      Gerencie seus equipamentos e mantenha o controle de patrimônio de forma eficiente.
+    </p>
+
+    <div class="row mt-4">
+      <div class="col-md-4">
+        <button class="btn btn-success w-100 p-3" (click)="navigateTo('/hardware_create')">
+          + Cadastrar Novo Hardware
+        </button>
       </div>
-    </section>
-  </div>
+      <div class="col-md-4">
+        <a routerLink="/hardware_list" class="btn btn-outline-primary w-100 p-3">
+          📋 Ver Lista de Hardwares
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a routerLink="/usuario_list" class="btn btn-outline-secondary w-100 p-3">
+          👥 Gerenciar Usuários
+        </a>
+      </div>
+    </div>
+  </section>
+</div>

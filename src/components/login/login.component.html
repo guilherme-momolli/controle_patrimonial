@@ -1,49 +1,47 @@
-<div class="login-container">
-  <h2>Login</h2>
+<div class="container d-flex justify-content-center align-items-center vh-100">
+  <div class="card shadow-lg p-4 bg-light w-50">
+    <h2 class="text-center text-primary fw-bold">Login</h2>
 
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-    
-    <div class="form-group">
-      <label for="email">E-mail</label>
-      <input 
-        id="email" 
-        formControlName="email" 
-        type="email" 
-        placeholder="Digite seu e-mail"
-        aria-label="Digite seu e-mail"
-        [class.invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
-      />
-      <p class="error" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-        E-mail inválido
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" >
+      
+      <div class="mb-3">
+        <label for="email" class="form-label">E-mail</label>
+        <input 
+          id="email" 
+          formControlName="email" 
+          type="email" 
+          class="form-control" 
+          placeholder="Digite seu e-mail"
+          aria-label="Digite seu e-mail"
+          [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+        />
+        <div class="invalid-feedback">E-mail inválido</div>
+      </div>
+
+      <div class="mb-3">
+        <label for="senha" class="form-label">Senha</label>
+        <input 
+          id="senha" 
+          formControlName="senha" 
+          type="password" 
+          class="form-control" 
+          placeholder="Digite sua senha"
+          aria-label="Digite sua senha"
+          [class.is-invalid]="loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched"
+        />
+        <div class="invalid-feedback">Senha obrigatória</div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100" [disabled]="loginForm.invalid">
+        Entrar
+      </button>
+
+      <p class="text-center mt-3">
+        Não tem uma conta?
+        <a class="text-primary" (click)="navigateToCadastro()">Cadastrar</a>
       </p>
-    </div>
+    </form>
 
-    
-    <div class="form-group">
-      <label for="senha">Senha</label>
-      <input 
-        id="senha" 
-        formControlName="senha" 
-        type="password" 
-        placeholder="Digite sua senha"
-        aria-label="Digite sua senha"
-        [class.invalid]="loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched"
-      />
-      <p class="error" *ngIf="loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched">
-        Senha obrigatória
-      </p>
-    </div>
-
- 
-    <button type="submit" [disabled]="loginForm.invalid" (click)="onSubmit()">Entrar</button>
-
-    
-    <p class="register-link">
-      Não tem uma conta?
-      <a class="register-btn" (click)="navigateToCadastro()">Cadastrar</a>
-    </p>
-  </form>
-
-
-  <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+    <p *ngIf="errorMessage" class="text-danger text-center mt-2">{{ errorMessage }}</p>
+  </div>
 </div>

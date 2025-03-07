@@ -1,5 +1,4 @@
-/* Navbar principal */
-.navbar {
+/* .navbar {
   background-color: #001aff;
   padding: 10px;
   width: 100%;
@@ -8,7 +7,6 @@
   align-items: center;
 }
 
-/* Links da navbar */
 .nav-links {
   list-style-type: none;
   padding: 0;
@@ -20,7 +18,6 @@
   margin-right: 20px;
 }
 
-/* Estilização do botão do usuário */
 .user-menu {
   position: relative;
 }
@@ -33,12 +30,10 @@
   font-size: 20px;
 }
 
-/* Ícone do usuário */
 .user-button i {
   font-size: 24px;
 }
 
-/* Dropdown de usuário */
 .dropdown-menu {
   position: absolute;
   right: 0;
@@ -65,4 +60,4 @@
 
 .dropdown-menu li a:hover {
   background: #f0f0f0;
-}
+} */

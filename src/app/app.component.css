@@ -168,7 +168,7 @@
 
 
   /* Reset padrão */
-* {
+  * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -224,6 +224,25 @@ button.primary {
 button.danger {
     background-color: #dc3545;
     color: white;
+}
+
+button[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+}
+
+button[type="button"] {
+  background-color: #f44336;
+  color: white;
+}
+button:first-child {
+  background: #ffc107;
+  color: black;
+}
+
+button:last-child {
+  background: #dc3545;
+  color: white;
 }
 
 button.dark-mode-toggle {
@@ -303,4 +322,13 @@ body.dark-mode .navbar a {
         flex-direction: column;
         align-items: flex-start;
     }
+}
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+th {
+  background-color: #00f;
+  color: white;
 }

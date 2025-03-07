@@ -1,19 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
-import { TopNavbarComponent } from '../components/top-navbar/top-navbar.component';
-import { HeaderComponent } from "../components/header/header.component";
+import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-header',
   standalone: true,
-  imports: [RouterOutlet, HttpClientModule, HeaderComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
-  template: '<div [innerHTML]="htmlContent"></div>',
+  imports: [],
+  templateUrl: './header.component.html',
+  styleUrl: './header.component.css'
 })
-export class AppComponent implements OnInit{
-  title = 'controle_patrimonial';
+export class HeaderComponent {
   toggleDarkMode() {
     if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
       document.body.classList.toggle('dark-mode');

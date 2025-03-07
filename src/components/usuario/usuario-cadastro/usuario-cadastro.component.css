@@ -1,5 +1,4 @@
-/* Estilo geral do formulário */
-.form-container {
+/* .form-container {
     width: 100%;
     max-width: 400px;
     margin: 40px auto;
@@ -10,14 +9,12 @@
     text-align: center;
   }
   
-  /* Título */
   h2 {
     font-size: 24px;
     color: #333;
     margin-bottom: 15px;
   }
   
-  /* Estilização do fieldset e legend */
   fieldset {
     border: 2px solid #007bff;
     border-radius: 8px;
@@ -31,20 +28,17 @@
     color: #007bff;
   }
   
-  /* Grupo de cada campo do formulário */
   .form-group {
     display: flex;
     flex-direction: column;
     margin-bottom: 15px;
   }
   
-  /* Labels */
   label {
     font-weight: bold;
     margin-bottom: 5px;
   }
   
-  /* Inputs */
   input {
     padding: 10px;
     border: 1px solid #ccc;
@@ -58,21 +52,18 @@
     border-color: #007bff;
   }
   
-  /* Mensagens de erro */
   .error {
     color: #d9534f;
     font-size: 14px;
     margin-top: 5px;
   }
   
-  /* Mensagens de sucesso */
   .success {
     color: #28a745;
     font-size: 14px;
     margin-bottom: 10px;
   }
   
-  /* Botão de envio */
   button {
     width: 100%;
     padding: 10px;
@@ -93,4 +84,4 @@
     background: #ccc;
     cursor: not-allowed;
   }
-  
+   */

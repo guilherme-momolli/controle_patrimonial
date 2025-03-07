@@ -1,43 +1,63 @@
-<div class="form-container">
-    <h2>Cadastro de Usuário</h2>
-  
-    <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
-    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-  
-    <form [formGroup]="userForm" (ngSubmit)="submitForm()">
-      <fieldset>
-        <legend>Informações Pessoais</legend>
-  
-        <div class="form-group">
-          <label for="nome">Nome</label>
-          <input id="nome" formControlName="nome" type="text" placeholder="Nome completo">
-          <p class="error" *ngIf="userForm.get('nome')?.invalid && userForm.get('nome')?.touched">
-            Nome é obrigatório
-          </p>
-        </div>
-  
-        <div class="form-group">
-          <label for="email">E-mail</label>
-          <input id="email" formControlName="email" type="email" placeholder="Email">
-          <p class="error" *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
-            E-mail inválido
-          </p>
-        </div>
-  
-        <div class="form-group">
-          <label for="senha">Senha</label>
-          <input id="senha" formControlName="senha" type="password" placeholder="Senha">
-          <p class="error" *ngIf="userForm.get('senha')?.invalid && userForm.get('senha')?.touched">
-            Senha é obrigatória
-          </p>
-        </div>
-  
-        <button type="submit" [disabled]="isSubmitting || userForm.invalid">Cadastrar</button>
-  
-        <p>Já possui uma conta?
-          <button (click)="navigateToLogin()">Login</button>
-        </p>
-      </fieldset>
-    </form>
-  </div>
-  
+<div class="container mt-4">
+  <h2 class="mb-3 text-primary text-center">Cadastro de Usuário</h2>
+
+  <!-- Mensagens de feedback -->
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <form [formGroup]="userForm" (ngSubmit)="submitForm()" class="card p-4 shadow">
+    <fieldset>
+      <legend class="text-secondary">Informações Pessoais</legend>
+
+      <div class="mb-3">
+        <label for="nome" class="form-label">Nome</label>
+        <input 
+          id="nome" 
+          formControlName="nome" 
+          type="text" 
+          class="form-control"
+          placeholder="Nome completo"
+          [class.is-invalid]="userForm.get('nome')?.invalid && userForm.get('nome')?.touched"
+        />
+        <div class="invalid-feedback">Nome é obrigatório</div>
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">E-mail</label>
+        <input 
+          id="email" 
+          formControlName="email" 
+          type="email" 
+          class="form-control"
+          placeholder="Email"
+          [class.is-invalid]="userForm.get('email')?.invalid && userForm.get('email')?.touched"
+        />
+        <div class="invalid-feedback">E-mail inválido</div>
+      </div>
+
+      <div class="mb-3">
+        <label for="senha" class="form-label">Senha</label>
+        <input 
+          id="senha" 
+          formControlName="senha" 
+          type="password" 
+          class="form-control"
+          placeholder="Senha"
+          [class.is-invalid]="userForm.get('senha')?.invalid && userForm.get('senha')?.touched"
+        />
+        <div class="invalid-feedback">Senha é obrigatória</div>
+      </div>
+
+      <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || userForm.invalid">
+          Cadastrar
+        </button>
+      </div>
+
+      <p class="text-center mt-3">
+        Já possui uma conta?
+        <button class="btn btn-link" (click)="navigateToLogin()">Login</button>
+      </p>
+    </fieldset>
+  </form>
+</div>

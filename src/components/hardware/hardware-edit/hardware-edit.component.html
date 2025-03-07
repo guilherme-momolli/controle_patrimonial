@@ -1,1 +1,59 @@
-<p>hardware-edit works!</p>
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Editar Hardware</h2>
+
+  <form (ngSubmit)="salvarEdicao()" class="bg-light p-4 rounded shadow">
+    <fieldset>
+      <legend class="text-primary">Dados do Hardware</legend>
+
+      <div class="mb-3">
+        <label for="codigoPatrimonial" class="form-label">Código Patrimonial</label>
+        <input id="codigoPatrimonial" [(ngModel)]="hardware.codigoPatrimonial" name="codigoPatrimonial" required class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label for="componente" class="form-label">Componente</label>
+        <select id="componente" [(ngModel)]="hardware.componente" name="componente" required class="form-select">
+          <option *ngFor="let item of componentes" [value]="item">{{ item }}</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="numeroSerial" class="form-label">Número Serial</label>
+        <input id="numeroSerial" [(ngModel)]="hardware.numeroSerial" name="numeroSerial" required class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label for="fabricante" class="form-label">Fabricante</label>
+        <input id="fabricante" [(ngModel)]="hardware.fabricante" name="fabricante" required class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label for="modelo" class="form-label">Modelo</label>
+        <input id="modelo" [(ngModel)]="hardware.modelo" name="modelo" required class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label for="velocidade" class="form-label">Velocidade (GHz)</label>
+        <input id="velocidade" type="number" [(ngModel)]="hardware.velocidade" name="velocidade" required class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label for="precoTotal" class="form-label">Preço Total (R$)</label>
+        <input id="precoTotal" type="number" [(ngModel)]="hardware.precoTotal" name="precoTotal" required class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label for="estatus" class="form-label">Estatus</label>
+        <select id="estatus" [(ngModel)]="hardware.estatus" name="estatus" required class="form-select">
+          <option *ngFor="let item of estatusList" [value]="item">{{ item }}</option>
+        </select>
+      </div>
+
+      <div class="d-flex justify-content-between">
+        <button type="submit" class="btn btn-primary">💾 Salvar</button>
+        <button type="button" class="btn btn-danger" (click)="router.navigate(['/hardware_list'])">❌ Cancelar</button>
+      </div>
+
+    </fieldset>
+  </form>
+</div>

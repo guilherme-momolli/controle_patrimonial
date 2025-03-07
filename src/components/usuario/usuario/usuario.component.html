@@ -1,22 +1,31 @@
-<table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Nome</th>
-        <th>Email</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let usuario of usuarios">
-        <td>{{ usuario.id }}</td>
-        <td>{{ usuario.nome }}</td>
-        <td>{{ usuario.email }}</td>
-        <td>
-          <button (click)="editarUsuario(usuario.id)">✏️ Editar</button>
-          <button (click)="deletarUsuario(usuario.id)">🗑️ Deletar</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  
+<div class="container mt-4">
+  <h2 class="mb-3 text-primary">Gerenciamento de Usuários</h2>
+
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Email</th>
+          <th class="text-center">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let usuario of usuarios">
+          <td>{{ usuario.id }}</td>
+          <td>{{ usuario.nome }}</td>
+          <td>{{ usuario.email }}</td>
+          <td class="text-center">
+            <button class="btn btn-warning btn-sm me-2" (click)="editarUsuario(usuario.id)">
+              ✏️ Editar
+            </button>
+            <button class="btn btn-danger btn-sm" (click)="deletarUsuario(usuario.id)">
+              🗑️ Deletar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
