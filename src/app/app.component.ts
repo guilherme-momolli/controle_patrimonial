@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
-import { TopNavbarComponent } from '../components/top-navbar/top-navbar.component';
 import { HeaderComponent } from "../components/header/header.component";
 
 @Component({

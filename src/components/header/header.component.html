@@ -1,19 +1,51 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container">
-    <a class="navbar-brand" href="#">Controle Patrimonial</a>
-    
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/">
+      <i class="bi bi-box-seam"></i> Controle Patrimonial
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-
-    <div class="collapse navbar-collapse" id="navbarNav">
+    
+    <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
       <ul class="navbar-nav me-auto">
-        <li class="nav-item"><a class="nav-link" routerLink="/">🏠 Home</a></li>
-        <li class="nav-item"><a class="nav-link" routerLink="/contato">📞 Contato</a></li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/">
+            <i class="bi bi-house-door"></i> Home
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/contato">
+            <i class="bi bi-telephone"></i> Contato
+          </a>
+        </li>
+        
+
+        <li class="nav-item dropdown">
+          <div class="dropdown"> 
+            <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true">
+              <i class="bi bi-building"></i> Patrimônio
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li><h6 class="dropdown-header">Hardwares</h6></li>
+              <li><a class="dropdown-item" routerLink="/hardware_create"><i class="bi bi-plus-circle"></i> Cadastrar Hardwares</a></li>
+              <li><a class="dropdown-item" routerLink="/hardware_list"><i class="bi bi-list"></i> Listar Hardwares</a></li>
+              <hr class="dropdown-divider"/>
+              <li><h6 class="dropdown-header">Veículos</h6></li>
+              <li><a class="dropdown-item" routerLink="/cadastrar_veiculo"><i class="bi bi-car-front"></i> Cadastrar Veículos</a></li>
+              <li><a class="dropdown-item" routerLink="/listar_veiculo"><i class="bi bi-list"></i> Listar Veículos</a></li>
+              <hr class="dropdown-divider"/>
+              <li><h6 class="dropdown-header">Patrimônios</h6></li>
+              <li><a class="dropdown-item" routerLink="/patrimonio_list"><i class="bi bi-archive"></i> Listar Patrimônios</a></li>
+            </ul>
+          </div>
+        </li>        
       </ul>
-      
+
+      <!-- Botão Modo Escuro -->
       <button class="btn btn-outline-light ms-2" (click)="toggleDarkMode()">
-        🌙 Modo Escuro
+        <i class="bi bi-moon-stars"></i> Modo Escuro
       </button>
     </div>
   </div>

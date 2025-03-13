@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HardwareComponent } from './hardware.component';
+import { NotaFiscalListComponent } from './nota-fiscal-list.component';
 
-describe('HardwareComponent', () => {
-  let component: HardwareComponent;
-  let fixture: ComponentFixture<HardwareComponent>;
+describe('NotaFiscalListComponent', () => {
+  let component: NotaFiscalListComponent;
+  let fixture: ComponentFixture<NotaFiscalListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HardwareComponent]
+      imports: [NotaFiscalListComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(HardwareComponent);
+    fixture = TestBed.createComponent(NotaFiscalListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

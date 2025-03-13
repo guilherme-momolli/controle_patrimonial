@@ -2,18 +2,22 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Hardware, HardwareService } from '../../../core/services/hardware/hardware.service';
 import { CommonModule } from '@angular/common';
 
+import { RelatorioService } from '../../../core/services/relatorio/relatorio.service';
+
 @Component({
-  selector: 'app-hardware-patrimonial',
+  selector: 'app-patrimonio-list',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './hardware-patrimonial.component.html',
-  styleUrl: './hardware-patrimonial.component.css'
+  templateUrl: './patrimonio-list.component.html',
+  styleUrl: './patrimonio-list.component.css'
 })
-export class HardwarePatrimonialComponent implements OnInit {
+export class PatrimonioListComponent implements OnInit {
   
   hardwaresAgrupados: { [codigoPatrimonial: string]: Hardware[] } = {};
 
-  constructor(private hardwareService: HardwareService, private cdRef: ChangeDetectorRef) {}
+  constructor(private hardwareService: HardwareService,
+    private cdRef: ChangeDetectorRef,
+    private relatorioService: RelatorioService) {}
 
   ngOnInit(): void {
     this.hardwareService.getHardwaresAgrupados().subscribe(data => {
@@ -21,7 +25,11 @@ export class HardwarePatrimonialComponent implements OnInit {
       this.cdRef.detectChanges();
     });
   }
-  
+
+  gerarRelatorio() {
+    this.relatorioService.gerarRelatorioPatrimonio(this.hardwaresAgrupados);
+  }
+
   carregarHardwares(): void {
     this.hardwareService.getHardwaresAgrupados().subscribe(data => {
       this.hardwaresAgrupados = data;

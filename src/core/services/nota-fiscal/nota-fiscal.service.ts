@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface NotaFiscal {
   id: number;
@@ -12,7 +13,7 @@ export interface NotaFiscal {
   providedIn: 'root'
 })
 export class NotaFiscalService {
-    private apiUrl = 'http://192.168.0.125:8080/nota_fiscal';
+    private apiUrl = environment.apiUrl + '/nota_fiscal';
 
     constructor(private http: HttpClient) {}
 

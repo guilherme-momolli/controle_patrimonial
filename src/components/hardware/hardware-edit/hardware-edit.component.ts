@@ -15,42 +15,52 @@ import { Componente, Estatus } from '../hardware-cadastro/hardware.enum';
 export class HardwareEditComponent implements OnInit{
   hardware: any = { id: null, controlePatrimonial: '', componente: '', numeroSerial: '', modelo: '', fabricante: '', velocidade:'', precototal:'', estatus:''};
 
-   componentes = Object.values(Componente);
-    estatusList = Object.values(Estatus);
-    constructor(
-        private route: ActivatedRoute,
-        private hardwareService: HardwareService,
-        public router: Router
-      ) {}
+  componentes = Object.values(Componente);
+  estatusList = Object.values(Estatus);
+  
+  constructor(
+    private route: ActivatedRoute,
+    private hardwareService: HardwareService,
+    public router: Router
+  ) {}
     
-      ngOnInit(): void {
-        const id = this.route.snapshot.paramMap.get('id');
-        if (id) {
-          this.carregarHardware(parseInt(id));
-        }
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.carregarHardware(parseInt(id));
+    }
+  }
+  
+  onFileSelected(event: any, id: number): void {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.hardwareService.uploadImagem(id, file).subscribe(() => {
+        alert('Imagem enviada com sucesso!');
+        location.reload();
+      });
+    }
+  }
+  
+  carregarHardware(id: number): void {
+    this.hardwareService.getHardwareById(id).subscribe(
+      (data) => {
+        this.hardware = data;
+      },
+      (error) => {
+        console.error('Erro ao carregar usuário', error);
       }
-    
-      carregarHardware(id: number): void {
-        this.hardwareService.getHardwareById(id).subscribe(
-          (data) => {
-            this.hardware = data;
-          },
-          (error) => {
-            console.error('Erro ao carregar usuário', error);
-          }
-        );
-      }
-    
-      salvarEdicao(): void {
-        this.hardwareService.updateHardware(this.hardware).subscribe(
-          () => {
-            alert('Hardware atualizado com sucesso!');
-            this.router.navigate(['/hardware_list']);
-          },
-          (error) => {
-            console.error('Erro ao atualizar usuário', error);
-          }
-        );
-      }
+    );
+  }
 
+  salvarEdicao(): void {
+    this.hardwareService.updateHardware(this.hardware).subscribe(
+      () => {
+        alert('Hardware atualizado com sucesso!');
+        this.router.navigate(['/hardware_list']);
+      },
+      (error) => {
+        console.error('Erro ao atualizar usuário', error);
+      }
+    );
+  }
 }

@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { TopNavbarComponent } from '../top-navbar/top-navbar.component';
 import { RouterModule, Router } from '@angular/router';
 
 @Component({

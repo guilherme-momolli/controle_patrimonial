@@ -1,13 +1,26 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [],
+  imports:[CommonModule],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.css'
+  styleUrls: ['./header.component.css']
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
+  isLoggedIn = false; // Simulação inicial
+
+  ngOnInit() {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      this.isLoggedIn = !!localStorage.getItem('authToken');
+
+      if (localStorage.getItem('darkMode') === 'enabled') {
+        document.body.classList.add('dark-mode');
+      }
+    }
+  }
+
   toggleDarkMode() {
     if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
       document.body.classList.toggle('dark-mode');
@@ -20,11 +33,9 @@ export class HeaderComponent {
     }
   }
 
-  ngOnInit() {
+  logout() {
     if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-      if (localStorage.getItem('darkMode') === 'enabled') {
-        document.body.classList.add('dark-mode');
-      }
+      localStorage.removeItem('authToken');      this.isLoggedIn = false; 
     }
   }
 }

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-export interface User {
+export interface Veiculo {
   id: number;
   nome: string;
   email: string;
@@ -12,28 +12,28 @@ export interface User {
 @Injectable({
   providedIn: 'root'
 })
-export class UsuarioService {
-    private apiUrl = environment.apiUrl + '/usuario';
+export class VeiculoService {
+    private apiUrl = environment.apiUrl + '/veiculo';
 
     constructor(private http: HttpClient) {}
 
-    getUsuarios(): Observable<any[]> {
+    getVeiculos(): Observable<any[]> {
         return this.http.get<any[]>(`${this.apiUrl}/list`);
     }
 
-    getUsuarioById(id: number): Observable<any> {
+    getVeiculoById(id: number): Observable<any> {
         return this.http.get<any>(`${this.apiUrl}/list/${id}`);
     }
     
-    createUsuario(userData: any): Observable<any> {
+    createVeiculo(userData: any): Observable<any> {
         return this.http.post(`${this.apiUrl}/create`, userData);
     }
 
-    updateUsuario(usuario: any): Observable<any> {
-        return this.http.put<any>(`${this.apiUrl}/update/${usuario.id}`, usuario);
+    updateVeiculo(veiculo: any): Observable<any> {
+        return this.http.put<any>(`${this.apiUrl}/update/${veiculo.id}`, veiculo);
     }
 
-    deleteUsuario(id: number): Observable<any> {
+    deleteVeiculo(id: number): Observable<any> {
         return this.http.delete<any>(`${this.apiUrl}/delete/${id}`);
     }
 }

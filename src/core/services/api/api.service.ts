@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  private readonly API_URL = 'http://192.168.0.125:8080';
+  private readonly API_URL = environment.apiUrl + '/usuario';
 
   constructor(private http: HttpClient) {}
 
@@ -15,11 +17,11 @@ export class ApiService {
   }
 
   getUsuarios(): Observable<any[]>{
-    return this.http.get<any[]>(`${this.API_URL}/usuario/list`);
+    return this.http.get<any[]>(`${this.API_URL}/list`);
   }
 
   createUsuario(userData: any): Observable<any> {
-    return this.http.post(`${this.API_URL}/usuario/create`, userData);
+    return this.http.post(`${this.API_URL}/create`, userData);
   }
 
   // loginUsuario(userData: any){

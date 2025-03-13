@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TopNavbarComponent } from './top-navbar.component';
+import { PatrimonioListComponent } from './patrimonio-list.component';
 
-describe('TopNavbarComponent', () => {
-  let component: TopNavbarComponent;
-  let fixture: ComponentFixture<TopNavbarComponent>;
+describe('PatrimonioListComponent', () => {
+  let component: PatrimonioListComponent;
+  let fixture: ComponentFixture<PatrimonioListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TopNavbarComponent]
+      imports: [PatrimonioListComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(TopNavbarComponent);
+    fixture = TestBed.createComponent(PatrimonioListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

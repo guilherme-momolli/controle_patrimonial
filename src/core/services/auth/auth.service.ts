@@ -2,6 +2,7 @@ import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../../../environments/environment';
 
 interface AuthResponse {
   token: string;
@@ -11,7 +12,7 @@ interface AuthResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://192.168.0.125:8080/auth/login';
+  private apiUrl = environment.apiUrl + '/auth/login';
 
   constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: object) {}
 
