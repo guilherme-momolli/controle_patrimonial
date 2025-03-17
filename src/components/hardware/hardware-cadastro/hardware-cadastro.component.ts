@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { HardwareService } from '../../../core/services/hardware/hardware.service';
-import { Componente, Estatus } from './hardware.enum';
+import { Componente, Estatus } from '../hardware.enum';
 
 @Component({
   selector: 'app-hardware-cadastro',

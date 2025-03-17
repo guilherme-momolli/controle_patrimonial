@@ -21,7 +21,7 @@ export class AuthService {
       tap(response => {
         if (response?.token) {
           this.setToken(response.token);
-          console.log(this.getToken)
+          console.log(this.getToken());
         }
       })
     );
@@ -45,7 +45,6 @@ export class AuthService {
     console.log('Token encontrado:', token);
     return !!token;
   }
-  
 
   logout(): void {
     if (isPlatformBrowser(this.platformId)) {

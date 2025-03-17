@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NotaFiscalListComponent } from './nota-fiscal-list.component';
+import { InstituicaoEditComponent } from './instituicao-edit.component';
 
-describe('NotaFiscalListComponent', () => {
-  let component: NotaFiscalListComponent;
-  let fixture: ComponentFixture<NotaFiscalListComponent>;
+describe('InstituicaoEditComponent', () => {
+  let component: InstituicaoEditComponent;
+  let fixture: ComponentFixture<InstituicaoEditComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NotaFiscalListComponent]
+      imports: [InstituicaoEditComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(NotaFiscalListComponent);
+    fixture = TestBed.createComponent(InstituicaoEditComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

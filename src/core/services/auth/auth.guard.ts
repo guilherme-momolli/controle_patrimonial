@@ -7,11 +7,9 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-
   constructor(private authService: AuthService, private router: Router) {}
 
   canActivate(
-    
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
@@ -20,10 +18,11 @@ export class AuthGuard implements CanActivate {
     if (this.authService.isAuthenticated()) {
       console.log('Usuário autenticado.');
       return true;
-  } else {
+    } else {
       console.log('Usuário NÃO autenticado! Redirecionando para /login...');
       this.router.navigate(['/login']);
       return false;
-  }
+    }
   }
 }
+

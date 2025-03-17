@@ -2,6 +2,7 @@ export enum Componente {
     ARMAZENAMENTO= "Armazenamento",
     FONTE_ALIMENTACAO = "Fonte de alimentação",
     GABINETE = "Gabinete",
+    NOTEBOOK = "Notebook",
     MEMORIA_RAM ="Memória RAM",
     PLACA_MAE = "Placa mãe",
     PLACA_VIDEO = "Placa de vídeo",
@@ -20,5 +21,5 @@ export enum Estatus {
     DESAPARECIDO ="Desaparecido",
     DEFEITUOSO = "Defeituoso",
     INUTILIZADO = "Inutilizado",
-    DESCARTADO = 'Descartado'
+    DESCARTADO = "Descartado"
 }

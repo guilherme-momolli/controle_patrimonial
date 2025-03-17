@@ -1,29 +1,79 @@
-/* You can add global styles to this file, and also import other style files */
-/*@import './app/app.component.css';*/
+/* Modo Escuro */
 body.dark-mode {
-    background-color: #121212;
-    color: white;
-  }
-  
-  .dark-mode .navbar {
-    background-color: #1e1e1e !important;
-  }
-  
-  .dark-mode .card {
-    background-color: #222;
-    color: white;
-  }
-  
-  .dark-mode .btn-outline-light {
-    border-color: white;
-    color: white;
-  }
-  
-  .dark-mode .btn-outline-light:hover {
-    background-color: white;
-    color: black;
-  }
+  background-color: #121212;
+  color: white;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-  .navbar {
-    overflow: hidden;
-  }
+.dark-mode .navbar {
+  background-color: #1e1e1e !important;
+  transition: background-color 0.3s ease;
+}
+
+.dark-mode .card {
+  background-color: #222;
+  color: white;
+  border-color: #333;
+}
+
+.dark-mode .btn-outline-light {
+  border-color: white;
+  color: white;
+}
+
+.dark-mode .btn-outline-light:hover {
+  background-color: white;
+  color: black;
+}
+
+/* Modo Claro */
+body {
+  background-color: #f8f9fa;
+  color: black;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.navbar {
+  background-color: #343a40 !important;
+  transition: background-color 0.3s ease;
+}
+
+.card {
+  background-color: white;
+  color: black;
+  border-color: #ddd;
+}
+
+/* Ajuste de z-index para evitar sobreposição do menu */
+.navbar {
+  position: relative;
+  z-index: 1000;
+}
+
+.dropdown-menu {
+  z-index: 1050;
+}
+
+/* Botão de alternância de tema */
+.theme-toggle {
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark-mode .theme-toggle {
+  background-color: #444;
+  color: white;
+}
+
+.theme-toggle:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.dark-mode .theme-toggle:hover {
+  background-color: white;
+  color: black;
+}

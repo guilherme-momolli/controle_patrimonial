@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HardwareService } from '../../../core/services/hardware/hardware.service';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
-import { Componente, Estatus } from '../hardware-cadastro/hardware.enum';
+import { Componente, Estatus } from '../hardware.enum';
 
 @Component({
   selector: 'app-hardware-edit',
