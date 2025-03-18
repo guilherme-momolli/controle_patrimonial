@@ -28,25 +28,15 @@
               <i class="bi bi-building"></i> Patrimônio
             </a>
             <ul class="dropdown-menu dropdown-menu-dark">
-              <li><h6 class="dropdown-header">Hardwares</h6></li>
-              <li><a class="dropdown-item" routerLink="/hardware_create" (click)="closeDropdown($event)">
-                <i class="bi bi-pc-display"></i> Cadastrar Hardwares
-              </a></li>
+              <li><h6 class="dropdown-header">Módulos</h6></li>
               <li><a class="dropdown-item" routerLink="/hardware_list" (click)="closeDropdown($event)">
-                <i class="bi bi-list"></i> Listar Hardwares
+                <i class="bi bi-pc-display"></i> Hardwares
               </a></li>
-              <hr class="dropdown-divider"/>
-              <li><h6 class="dropdown-header">Veículos</h6></li>
               <li><a class="dropdown-item" routerLink="/cadastrar_veiculo" (click)="closeDropdown($event)">
-                <i class="bi bi-car-front"></i> Cadastrar Veículos
+                <i class="bi bi-car-front"></i> Veiculos
               </a></li>
-              <li><a class="dropdown-item" routerLink="/listar_veiculo" (click)="closeDropdown($event)">
-                <i class="bi bi-list"></i> Listar Veículos
-              </a></li>
-              <hr class="dropdown-divider"/>
-              <li><h6 class="dropdown-header">Patrimônios</h6></li>
               <li><a class="dropdown-item" routerLink="/patrimonio_list" (click)="closeDropdown($event)">
-                <i class="bi bi-archive"></i> Listar Patrimônios
+                <i class="bi bi-archive"></i> Patrimônios Gerais
               </a></li>
             </ul>
           </div>
@@ -80,7 +70,6 @@
             </ul>
           </div>
         </li>
-
         <button class="btn btn-outline-light ms-2" (click)="toggleDarkMode()">
           <i class="bi bi-moon-stars"></i> Modo Escuro
         </button>

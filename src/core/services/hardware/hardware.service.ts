@@ -55,8 +55,8 @@ export class HardwareService {
       catchError(this.handleError)
     );*/
   }
-  createHardware(hardwareData: FormData) {
-    return this.http.post(`${this.apiUrl}/create`, hardwareData);
+  createHardware(hardwareData: FormData): Observable<Hardware> {
+    return this.http.post<Hardware>(`${this.apiUrl}/create`, hardwareData);
   }
   
 

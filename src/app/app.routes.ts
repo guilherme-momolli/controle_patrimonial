@@ -23,7 +23,7 @@ export const routes: Routes = [
   { path: 'usuario_list', component: UsuarioComponent, canActivate: [AuthGuard]},
   { path: 'usuario_edit/:id', component: UsuarioEditComponent },
   { path: 'hardware_list', component: HardwareListComponent},
-  { path: 'hardware_create', component: HardwareCadastroComponent},
+  //{ path: 'hardware_create', component: HardwareCadastroComponent},
   { path: 'hardware_edit/:id', component: HardwareEditComponent},
   { path: 'patrimonio_list', component: PatrimonioListComponent},
   { path: '**', component: NotFoundComponent}
