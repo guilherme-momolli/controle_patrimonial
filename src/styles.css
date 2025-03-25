@@ -1,13 +1,140 @@
+/* ======================== RESET ======================== */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ======================== TABELA ======================== */
+.table-container {
+  max-height: 500px; /* Define uma altura máxima */
+  overflow-y: auto;  /* Habilita a rolagem vertical */
+  border: 1px solid #f2f2f2;
+  background-color: #f2f2f2;
+  border-radius: 5px;
+}
+
+.table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #007bff !important;
+  color: white;
+}
+
+/* Estilização geral da tabela */
+.table {
+  border-collapse: collapse;
+}
+
+/* ======================== LAYOUT PRINCIPAL ======================== */
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.body-container {
+  flex: 1; /* Ocupa o espaço disponível, empurrando o footer para baixo */
+  min-height: calc(100vh - 70px - 50px); /* Considera navbar e footer */
+  padding-bottom: 50px;
+  margin-top: 70px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ======================== NAVBAR ======================== */
+.navbar {  
+}
+
+/* ======================== FOOTER ======================== */
+.footer {
+  
+}
+
+.dark-mode .footer {
+  background-color: #1e1e1e;
+  color: #d1d1d1;
+}
+
+/* ======================== MODO CLARO ======================== */
+body {
+  background-color: #f2f2f2;
+  color: black;
+}
+
+.card {
+  background-color: #f2f2f2;
+  color: black;
+  border-color: #f2f2f2;
+}
+
+.modal {
+  background-color: rgba(242, 242, 242, 0.8);
+}
+
+.modal-content {
+  background-color: #f2f2f2;
+  color: black;
+  border: 1px solid #f2f2f2;
+}
+
+.modal-header, .modal-footer {
+  background-color: #f2f2f2;
+  border-color: #ddd;
+}
+
+.modal-body {
+  color: black;
+}
+
 /* ======================== MODO ESCURO ======================== */
 body.dark-mode {
   background-color: #121212;
+  color: #f2f2f2;
+}
+
+.dark-mode .table-container {
+  background-color: #1e1e1e; /* Fundo escuro para o container */
+  border: 1px solid #444;
+}
+
+.dark-mode .table {
+  background-color: #222; /* Fundo das células */
   color: white;
-  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark-mode .table thead {
+  background-color: #0056b3 !important; /* Cor do cabeçalho no modo escuro */
+  color: white;
+}
+
+.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+  background-color: #2a2a2a; /* Linhas ímpares com tom mais escuro */
+}
+
+.dark-mode .table-striped tbody tr:nth-of-type(even) {
+  background-color: #1e1e1e; /* Linhas pares mais escuras */
+}
+
+.dark-mode .table-hover tbody tr:hover {
+  background-color: #333 !important; /* Destaque ao passar o mouse */
+}
+
+.dark-mode .badge {
+  color: white !important;
+}
+
+/* Ajustando as bordas */
+.dark-mode .table-bordered,
+.dark-mode .table-bordered th,
+.dark-mode .table-bordered td {
+  border-color: #555;
 }
 
 .dark-mode .navbar {
   background-color: #1e1e1e !important;
-  transition: background-color 0.3s ease;
 }
 
 .dark-mode .card {
@@ -16,19 +143,8 @@ body.dark-mode {
   border-color: #333;
 }
 
-.dark-mode .btn-outline-light {
-  border-color: white;
-  color: white;
-}
-
-.dark-mode .btn-outline-light:hover {
-  background-color: white;
-  color: black;
-}
-
-/* Estilização do modal no modo escuro */
 .dark-mode .modal {
-  background-color: rgba(0, 0, 0, 0.8); /* Fundo escuro translúcido */
+  background-color: rgba(0, 0, 0, 0.8);
 }
 
 .dark-mode .modal-content {
@@ -37,36 +153,64 @@ body.dark-mode {
   border: 1px solid #333;
 }
 
-.dark-mode .modal-header,
-.dark-mode .modal-footer {
+.dark-mode .modal-header, .dark-mode .modal-footer {
   background-color: #2a2a2a;
   border-color: #444;
 }
 
 .dark-mode .modal-body {
-  color: #d1d1d1;
+  color: #f2f2f2;
 }
 
-/* Ajustes para inputs e selects no modo escuro */
-.dark-mode .form-control, 
-.dark-mode .form-select {
+/* ======================== FORMULÁRIOS ======================== */
+.form-control, .form-select {
+  background-color: white;
+  color: black;
+  border: 1px solid #ccc;
+}
+
+.form-control:focus, .form-select:focus {
+  background-color: #f8f9fa;
+  color: black;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Modo escuro para inputs */
+.dark-mode .form-control, .dark-mode .form-select {
   background-color: #2a2a2a;
   color: #ffffff;
   border: 1px solid #555;
 }
 
-.dark-mode .form-control:focus, 
-.dark-mode .form-select:focus {
+.dark-mode .form-control:focus, .dark-mode .form-select:focus {
   background-color: #333;
   color: #ffffff;
   border-color: #007bff;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
-.dark-mode .btn-close {
+/* ======================== BOTÕES ======================== */
+.btn-outline-light {
+  border-color: white;
+  color: white;
+}
+
+.btn-outline-light:hover {
+  background-color: white;
+  color: black;
+}
+
+.dark-mode .btn-outline-light:hover {
+  background-color: white;
+  color: black;
+}
+
+.btn-close {
   filter: invert(1);
 }
 
+/* Botões no modo escuro */
 .dark-mode .btn-primary {
   background-color: #007bff;
   border-color: #007bff;
@@ -87,72 +231,43 @@ body.dark-mode {
   border-color: #666;
 }
 
-/* ======================== MODO CLARO ======================== */
-body {
-  background-color: #f8f9fa;
-  color: black;
-  transition: background-color 0.3s ease, color 0.3s ease;
+/* ======================== ALERTAS ======================== */
+.alert-success {
+  background-color: #155724;
+  color: #d4edda;
+  border-color: #1b5e20;
 }
 
-.navbar {
-  background-color: #343a40 !important;
-  transition: background-color 0.3s ease;
+.alert-danger {
+  background-color: #721c24;
+  color: #f8d7da;
+  border-color: #7f1d1d;
 }
 
-.card {
-  background-color: white;
-  color: black;
-  border-color: #ddd;
-}
-
-/* Estilização do modal no modo claro */
-.modal {
-  background-color: rgba(255, 255, 255, 0.8); /* Fundo claro translúcido */
-}
-
-.modal-content {
-  background-color: white;
-  color: black;
+/* ======================== TABELAS ======================== */
+.table-container {
+  max-height: 500px;
+  overflow-y: auto;
   border: 1px solid #ddd;
 }
-
-.modal-header,
-.modal-footer {
-  background-color: #f1f1f1;
-  border-color: #ddd;
+.table-container {
+  max-height: 400px;
+  overflow-y: auto;
 }
 
-.modal-body {
-  color: black;
+.table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #007bff !important;
 }
 
-/* Ajustes para inputs e selects no modo claro */
-.form-control, 
-.form-select {
-  background-color: white;
-  color: black;
-  border: 1px solid #ccc;
-}
-
-.form-control:focus, 
-.form-select:focus {
-  background-color: #f8f9fa;
-  color: black;
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-/* Ajuste de z-index para evitar sobreposição do menu */
-.navbar {
-  position: relative;
-  z-index: 1000;
-}
-
+/* ======================== MENU DROPDOWN ======================== */
 .dropdown-menu {
   z-index: 1050;
 }
 
-/* Botão de alternância de tema */
+/* ======================== BOTÃO DE ALTERNAÇÃO DE TEMA ======================== */
 .theme-toggle {
   cursor: pointer;
   padding: 8px 12px;
@@ -176,15 +291,8 @@ body {
   color: black;
 }
 
-/* Estilos para alertas */
-.alert-success {
-  background-color: #155724;
-  color: #d4edda;
-  border-color: #1b5e20;
-}
 
-.alert-danger {
-  background-color: #721c24;
-  color: #f8d7da;
-  border-color: #7f1d1d;
+.img-thumbnail {
+  width: 75px;
+  height: auto;
 }

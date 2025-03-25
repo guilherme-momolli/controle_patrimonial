@@ -16,9 +16,10 @@ export class RelatorioService {
     doc.addImage(logoUrl, 'JPEG', 10, 10, 30, 30); // (imagem, tipo, x, y, largura, altura)
 
     // Título
-    doc.setFontSize(16);
-    doc.text('Relatório de HArdwares', 75, 20);
+    doc.setFontSize(11);
+    doc.text('Relatório de Hardwares', 75, 20);
 
+    
     // Tabela
     const tableData = hardwares.map(hardware => [
       hardware.id,
