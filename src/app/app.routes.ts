@@ -12,6 +12,7 @@ import { UsuarioCadastroComponent } from '../components/pages/usuario/usuario-ca
 import { NotFoundComponent } from '../components/pages/not-found/not-found.component';
 import { PatrimonioListComponent } from '../components/pages/patrimonio/patrimonio-list/patrimonio-list.component';
 import { HardwareListComponent } from '../components/pages/hardware/hardware-list/hardware-list.component';
+import { ContatoComponent } from '../components/pages/contato/contato.component';
 
 export const routes: Routes = [
   { path: '', component: LandingPageComponent},
@@ -19,11 +20,10 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent},
   { path: 'main', component: MainComponent, canActivate: [AuthGuard]},
   { path: 'usuario_list', component: UsuarioComponent, canActivate: [AuthGuard]},
-  { path: 'usuario_edit/:id', component: UsuarioEditComponent },
-  { path: 'hardware_list', component: HardwareListComponent},
-  //{ path: 'hardware_create', component: HardwareCadastroComponent},
-  //{ path: 'hardware_edit/:id', component: HardwareEditComponent},
-  { path: 'patrimonio_list', component: PatrimonioListComponent},
+  { path: 'usuario_edit/:id', component: UsuarioEditComponent, canActivate:[AuthGuard]},
+  { path: 'hardware_list', component: HardwareListComponent, canActivate:[AuthGuard]},
+  { path: 'patrimonio_list', component: PatrimonioListComponent, canActivate:[AuthGuard]},
+  { path: 'contato', component: ContatoComponent},
   { path: '**', component: NotFoundComponent}
 ];
 

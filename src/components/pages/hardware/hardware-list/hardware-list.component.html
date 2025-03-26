@@ -24,8 +24,9 @@
         <tr *ngFor="let hardware of hardwares | paginate: { itemsPerPage: pageSize, currentPage: page }">
           <td>{{ hardware.id }}</td>
           <td>
-            <img [src]="hardware.imagemUrl ? hardware.imagemUrl : 'assets/default-image.png'" 
-                 alt="Imagem do Hardware" class="img-thumbnail" width="50">
+            <div class="image-frame" (click)="abrirImagemModal(hardware.imagemUrl)">
+              <img [src]="hardware.imagemUrl || 'assets/default-image.png'" alt="Imagem do Hardware" class="thumbnail">
+            </div>
           </td>
           <td>{{ hardware.codigoPatrimonial }}</td>
           <td>{{ hardware.componente }}</td>
@@ -59,9 +60,8 @@
 
   <pagination-controls (pageChange)="page = $event"></pagination-controls>
 
-  <!-- Botões -->
   <div class="d-flex gap-2 mt-3">
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCreateInstance">
+    <button class="btn btn-primary" (click)="abrirModalCreate()" data-bs-toggle="modal" data-bs-target="#modalCreateInstance">
       <i class="bi bi-clipboard-plus"></i> Cadastrar novo hardware
     </button>
     <button class="btn btn-primary" (click)="gerarRelatorio()">
@@ -85,7 +85,7 @@
         <form [formGroup]="hardwareForm" (ngSubmit)="salvarEdicao()">
           <fieldset [disabled]="isSubmitting">
             <div class="col-md-12 mb-3">
-              <label for="imagem" class="form-label">Imagem do Hardware</label>
+              <label for="imagem" class="form-label"><i class="bi bi-file-earmark-arrow-up"></i>Imagem do Hardware</label>
               <input id="imagem" type="file" class="form-control" (change)="onFileSelect($event)">
               <div *ngIf="imagemPreview" class="mt-2">
                 <img [src]="imagemPreview" alt="Preview" class="img-thumbnail" style="max-width: 150px;">
@@ -161,16 +161,16 @@
       <form [formGroup]="hardwareForm" (ngSubmit)="submitForm($event)">
         <fieldset [disabled]="isSubmitting">
           <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="codigoPatrimonial" class="form-label">Código Patrimonial</label>
-              <input id="codigoPatrimonial" formControlName="codigoPatrimonial" type="text" class="form-control">
-            </div>
             <div class="col-md-12 mb-3">
-              <label for="imagemCreate" class="form-label">Imagem do Hardware</label>
+              <label for="imagemCreate" class="form-label"><i class="bi bi-file-earmark-arrow-up"></i>Imagem do Hardware</label>
               <input id="imagemCreate" type="file" class="form-control" (change)="onFileSelect($event)">
               <div *ngIf="imagemPreview" class="mt-2">
                 <img [src]="imagemPreview" alt="Preview" class="img-thumbnail" style="max-width: 150px;">
               </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="codigoPatrimonial" class="form-label">Código Patrimonial</label>
+              <input id="codigoPatrimonial" formControlName="codigoPatrimonial" type="text" class="form-control">
             </div>
             <div class="col-md-6 mb-3">
               <label for="componente" class="form-label">Componente</label>
@@ -220,4 +220,18 @@
     </div>
   </div>
 </div>
+</div>
+
+<div #imagemModal class="modal fade" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Imagem do Hardware</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img [src]="imagemAmpliada" *ngIf="imagemAmpliada" class="img-fluid" alt="Imagem ampliada">
+      </div>
+    </div>
+  </div>
 </div>

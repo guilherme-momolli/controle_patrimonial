@@ -27,7 +27,6 @@ export interface Hardware {
 export class HardwareService {
   private apiUrl = `${environment.apiUrl}/hardware`;
   private fileUrl = `${environment.apiUrl}/file/v1`;
-
   
   constructor(private http: HttpClient, private fileService: FileService) {}
 
@@ -61,8 +60,18 @@ export class HardwareService {
     );
   }
   
-  updateHardware(id: number, hardwareData: FormData): Observable<Hardware> {
-    return this.http.put<Hardware>(`${this.apiUrl}/update/${id}`, hardwareData);
+  updateHardware(id: number, hardware: Hardware, imagem?: File): Observable<Hardware> {
+    const formData = new FormData();
+  
+    formData.append('hardware', new Blob([JSON.stringify(hardware)], { type: 'application/json' }));
+  
+    if (imagem) {
+      formData.append('file', imagem, imagem.name);
+    }
+  
+    return this.http.put<Hardware>(`${this.apiUrl}/update/${id}`, formData).pipe(
+      catchError(this.handleError)
+    );
   }
 
   deleteHardware(id: number): Observable<void> {
@@ -93,12 +102,11 @@ export class HardwareService {
     getImagemUrlById(id: number): Observable<string> {
       return this.getHardwareById(id).pipe(
         map(hardware => 
-          hardware.imagemUrl ? `${this.fileUrl}/getFile${hardware.imagemUrl}` : 'assets/default-image.png'
+          hardware.imagemUrl ? `${this.fileUrl}/getFile/${hardware.imagemUrl}` : 'assets/default-image.png'
         ),
         catchError(this.handleError)
       );
     }
-  
 
   /**
    * Retorna a URL da imagem no servidor ou uma imagem padrão caso não haja uma associada.

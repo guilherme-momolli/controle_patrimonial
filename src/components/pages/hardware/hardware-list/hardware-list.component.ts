@@ -2,14 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-
 import { NgxPaginationModule } from 'ngx-pagination';
-
 import { Hardware, HardwareService } from '../../../../core/services/hardware/hardware.service';
 import { RelatorioService } from '../../../../core/services/relatorio/relatorio.service';
-
 import { Componente, Estatus } from '../hardware.enum';
-
 
 declare var bootstrap: any;
 
@@ -41,6 +37,10 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
   @ViewChild('hardwareEditModal') hardwareEditModal!: ElementRef;
   private modalEditInstance: any;
 
+  imagemAmpliada: string | null = null;
+  @ViewChild('imagemModal') imagemModal!: ElementRef;
+  private modalImagemInstance: any;
+
   page = 1;
   pageSize = 10;
 
@@ -69,7 +69,7 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.imagemArquivo = input.files[0];
-      
+
       const reader = new FileReader();
       reader.onload = (e: ProgressEvent<FileReader>) => {
         this.imagemPreview = e.target?.result as string;
@@ -77,7 +77,7 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
       reader.readAsDataURL(this.imagemArquivo);
     }
   }
-  
+
   ngOnInit(): void {
     this.carregarHardwares();
   }
@@ -89,10 +89,9 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
     if (this.hardwareEditModal) {
       this.modalEditInstance = new bootstrap.Modal(this.hardwareEditModal.nativeElement);
     }
-  }
-
-  gerarRelatorio(): void {
-    this.relatorioService.gerearRelatorioHardware(this.hardwares);
+    if (this.imagemModal) {
+    this.modalImagemInstance = new bootstrap.Modal(this.imagemModal.nativeElement);
+    }
   }
 
   carregarHardwares(): void {
@@ -100,10 +99,9 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
       next: (data) => {
         this.hardwares = data.map(hardware => ({
           ...hardware,
-          imagemUrl: 'assets/default-image.png' // Definir um padrão enquanto carregamos as imagens
+          imagemUrl: 'assets/default-image.png'
         }));
-  
-        // Para cada hardware, buscar a URL da imagem
+
         this.hardwares.forEach(hardware => {
           this.hardwareService.getImagemUrlById(hardware.id).subscribe({
             next: (url) => {
@@ -119,8 +117,8 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
         console.error('Erro ao buscar hardwares:', error);
       }
     });
-  }  
-  
+  }
+
   deletarHardware(id: number): void {
     if (confirm('Tem certeza que deseja excluir este hardware?')) {
       this.hardwareService.deleteHardware(id).subscribe(
@@ -138,15 +136,18 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
     this.hardwareService.getHardwareById(hardwareId).subscribe((hardware) => {
       this.hardwareSelecionado = hardware;
       this.hardwareForm.patchValue(hardware);
-      
+
       if (hardware.imagemUrl) {
         this.imagemUrl = this.hardwareService.getImagemUrl(hardware.imagemUrl);
+        this.imagemPreview = this.imagemUrl;
+      } else {
+        this.imagemPreview = null;
       }
-      
+
       this.modalEditInstance.show();
     });
   }
-  
+
   salvarEdicao(): void {
     if (this.hardwareForm.invalid || this.isSubmitting) {
       return;
@@ -156,32 +157,136 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
     const id = this.hardwareForm.value.id;
     if (!id) return;
 
-    this.hardwareService.updateHardware(id, this.hardwareForm.value)
-      .subscribe({
-        next: (hardwareAtualizado) => {
-          console.log('Hardware atualizado com sucesso', hardwareAtualizado);
-          this.carregarHardwares();
-        },
-        error: (erro) => {
-          console.error('Erro ao atualizar hardware:', erro);
-        },
-        complete: () => {
-          this.isSubmitting = false;
-          this.modalEditInstance.hide();
-        }
-      });
-    this.hardwareForm.reset();
+    const hardwareData: Hardware = this.hardwareForm.value;
+    const imagem: File | undefined = this.imagemArquivo || undefined;
+
+    this.hardwareService.updateHardware(id, hardwareData, imagem).subscribe({
+      next: (hardwareAtualizado) => {
+        console.log('Hardware atualizado com sucesso', hardwareAtualizado);
+        this.carregarHardwares();
+        this.successMessage = 'Hardware atualizado com sucesso!';
+      },
+      error: (erro) => {
+        console.error('Erro ao atualizar hardware:', erro);
+        this.errorMessage = 'Erro ao atualizar hardware!';
+      },
+      complete: () => {
+        this.isSubmitting = false;
+        this.modalEditInstance.hide();
+        this.hardwareForm.reset();
+        this.imagemPreview = null;
+        this.imagemArquivo = null;
+
+
+      }
+    });
   }
 
-  abrirModal(): void {
+  onSubmit() {
+    if (this.hardwareForm.valid) {
+      const hardware: Hardware = this.hardwareForm.value;
+      const imagem: File | undefined = this.imagemArquivo || undefined; // Garante que não seja null
+
+      this.hardwareService.createHardware(hardware, imagem).subscribe({
+        next: (novoHardware) => {
+          console.log('Hardware cadastrado com sucesso!', novoHardware);
+          this.successMessage = 'Hardware cadastrado com sucesso!';
+          this.hardwares.push(novoHardware);
+          this.imagemUrl = this.hardwareService.getImagemUrl(novoHardware.imagemUrl);
+
+          this.hardwareForm.reset();
+          this.imagemPreview = null;
+          this.imagemArquivo = null;
+
+        },
+        error: (error) => {
+          console.error('Erro ao cadastrar hardware:', error);
+          this.errorMessage = 'Erro ao cadastrar hardware!';
+        },
+      });
+    }
+  }
+
+  submitForm(event: Event): void {
+    event.preventDefault();
+
+    if (this.hardwareForm.invalid || this.isSubmitting) {
+      console.warn('Formulário inválido');
+      return;
+    }
+
+    this.isSubmitting = true;
+    this.successMessage = null;
+    this.errorMessage = null;
+
+    const hardwareData: Hardware = {
+      ...this.hardwareForm.value,
+      componente: this.hardwareForm.value.componente.toUpperCase(),
+      estatus: this.hardwareForm.value.estatus.toUpperCase(),
+    };
+
+    const imagem: File | undefined = this.imagemArquivo || undefined;
+
+    this.hardwareService.createHardware(hardwareData, imagem).subscribe({
+      next: (hardwareCriado) => {
+        console.log('Hardware cadastrado com sucesso!', hardwareCriado);
+        this.successMessage = 'Hardware cadastrado com sucesso!';
+        this.hardwares.push(hardwareCriado);
+        this.imagemUrl = this.hardwareService.getImagemUrl(hardwareCriado.imagemUrl);
+
+        this.hardwareForm.reset();
+        this.imagemPreview = null;
+        this.imagemArquivo = null;
+      },
+      error: (erro) => {
+        console.error('Erro ao cadastrar hardware!', erro);
+        this.errorMessage = 'Erro ao cadastrar hardware!';
+      },
+      complete: () => {
+        this.isSubmitting = false;
+      },
+    });
+  }
+
+  gerarRelatorio(): void {
+    this.relatorioService.gerearRelatorioHardware(this.hardwares);
+  }
+
+  abrirImagemModal(imagemUrl?: string): void {
+    console.log("Imagem recebida:", imagemUrl);
+  
+    if (imagemUrl) {
+      // Verifica se a URL já contém "http" para evitar duplicação
+      this.imagemAmpliada = imagemUrl.startsWith('http') ? imagemUrl : this.hardwareService.getImagemUrl(imagemUrl);
+    } else {
+      this.imagemAmpliada = 'assets/default-image.png';
+    }
+  
+    console.log("Imagem final para exibição:", this.imagemAmpliada);
+    this.modalImagemInstance.show();
+  }
+  
+
+  fecharImagemModal(): void {
+    this.modalImagemInstance.hide();
+    this.imagemAmpliada = null;
+  }
+
+  abrirModalCreate(): void {
     this.hardwareForm.reset();
     this.imagemPreview = null;
     this.imagemArquivo = null;
+    this.selectedFile = undefined;
+
     this.modalCreateInstance.show();
   }
 
-  fecharModal(): void {
+  fecharModalCreate(): void {
     this.hardwareForm.reset();
+    this.imagemPreview = null;
+    this.imagemArquivo = null;
+    this.selectedFile = undefined;
+
     this.modalCreateInstance.hide();
   }
 
@@ -196,74 +301,4 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
       reader.readAsDataURL(this.imagemArquivo);
     }
   }
-
-  
-
-  onSubmit() {
-    if (this.hardwareForm.valid) {
-      const hardware: Hardware = this.hardwareForm.value;
-      const imagem: File | undefined = this.imagemArquivo || undefined; // Garante que não seja null
-  
-      this.hardwareService.createHardware(hardware, imagem).subscribe({
-        next: (novoHardware) => {
-          console.log('Hardware cadastrado com sucesso!', novoHardware);
-          this.successMessage = 'Hardware cadastrado com sucesso!';
-          this.hardwares.push(novoHardware);
-          this.imagemUrl = this.hardwareService.getImagemUrl(novoHardware.imagemUrl);
-  
-          this.hardwareForm.reset();
-          this.imagemPreview = null;
-          this.imagemArquivo = null;
-          this.fecharModal();
-        },
-        error: (error) => {
-          console.error('Erro ao cadastrar hardware:', error);
-          this.errorMessage = 'Erro ao cadastrar hardware!';
-        },
-      });
-    }
-  }
-  
-  submitForm(event: Event): void {
-    event.preventDefault();
-  
-    if (this.hardwareForm.invalid || this.isSubmitting) {
-      console.warn('Formulário inválido');
-      return;
-    }
-  
-    this.isSubmitting = true;
-    this.successMessage = null;
-    this.errorMessage = null;
-  
-    const hardwareData: Hardware = {
-      ...this.hardwareForm.value,
-      componente: this.hardwareForm.value.componente.toUpperCase(),
-      estatus: this.hardwareForm.value.estatus.toUpperCase(),
-    };
-  
-    // Usa `this.imagemArquivo` para garantir que a imagem está sendo enviada corretamente
-    const imagem: File | undefined = this.imagemArquivo || undefined;
-  
-    this.hardwareService.createHardware(hardwareData, imagem).subscribe({
-      next: (hardwareCriado) => {
-        console.log('Hardware cadastrado com sucesso!', hardwareCriado);
-        this.successMessage = 'Hardware cadastrado com sucesso!';
-        this.hardwares.push(hardwareCriado);
-        this.imagemUrl = this.hardwareService.getImagemUrl(hardwareCriado.imagemUrl);
-  
-        this.hardwareForm.reset();
-        this.imagemPreview = null;
-        this.imagemArquivo = null;
-        this.fecharModal();
-      },
-      error: (erro) => {
-        console.error('Erro ao cadastrar hardware!', erro);
-        this.errorMessage = 'Erro ao cadastrar hardware!';
-      },
-      complete: () => {
-        this.isSubmitting = false;
-      },
-    });
-  }    
 }
