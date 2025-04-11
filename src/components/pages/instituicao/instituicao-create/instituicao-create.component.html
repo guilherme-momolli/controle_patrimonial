@@ -1,1 +1,140 @@
-<p>instituicao-create works!</p>
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+  <div class="w-100" style="max-width: 720px;">
+    <h2 class="mb-4 text-primary text-center fw-bold">Cadastro de Instituição</h2>
+
+    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+    <form [formGroup]="instituicaoForm" (ngSubmit)="submitForm()">
+      <!-- Informações da Instituição -->
+      <fieldset class="mb-4">
+        <legend class="text-secondary">Informações da Instituição</legend>
+
+        <div class="mb-3">
+          <label for="razaoSocial" class="form-label">Razão Social</label>
+          <input id="razaoSocial" formControlName="razaoSocial" type="text" class="form-control"
+            placeholder="Nome jurídico" autocomplete="organization"
+            [class.is-invalid]="instituicaoForm.get('razaoSocial')?.invalid && instituicaoForm.get('razaoSocial')?.touched" />
+          <div class="invalid-feedback">Razão Social é obrigatória</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="nomeFantasia" class="form-label">Nome Fantasia</label>
+          <input id="nomeFantasia" formControlName="nomeFantasia" type="text" class="form-control"
+            placeholder="Nome comercial" autocomplete="organization"
+            [class.is-invalid]="instituicaoForm.get('nomeFantasia')?.invalid && instituicaoForm.get('nomeFantasia')?.touched" />
+          <div class="invalid-feedback">Nome Fantasia é obrigatório</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="tipoInstituicao" class="form-label">Tipo de Instituição</label>
+          <select id="tipoInstituicao" formControlName="tipoInstituicao" class="form-select">
+            <option *ngFor="let item of tipoInstituicoes" [value]="item">{{ item }}</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="cnpj" class="form-label">CNPJ</label>
+          <input id="cnpj" formControlName="cnpj" type="text" class="form-control" placeholder="CNPJ"
+            [disabled]="instituicaoForm.get('tipoInstituicao')?.value === 'Pública'"
+            [class.is-invalid]="instituicaoForm.get('cnpj')?.invalid && instituicaoForm.get('cnpj')?.touched" />
+          <div class="invalid-feedback">CNPJ é obrigatório</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="telefoneFixo" class="form-label">Telefone Fixo</label>
+          <input id="telefoneFixo" formControlName="telefoneFixo" type="text" class="form-control"
+            placeholder="telefoneFixo" autocomplete="organization"
+            [class.is-invalid]="instituicaoForm.get('telefoneFixo')?.invalid && instituicaoForm.get('telefoneFixo')?.touched" />
+          <div class="invalid-feedback">Razão Social é obrigatória</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="telefoneCelular" class="form-label">Telefone Celular</label>
+          <input id="telefoneCelular" formControlName="telefoneCelular" type="text" class="form-control"
+            placeholder="telefoneCelular" autocomplete="organization"
+            [class.is-invalid]="instituicaoForm.get('telefoneCelular')?.invalid && instituicaoForm.get('telefoneCelular')?.touched" />
+          <div class="invalid-feedback">Razão Social é obrigatória</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label">E-mail</label>
+          <input id="email" formControlName="email" type="email" class="form-control" placeholder="Email"
+            autocomplete="email" aria-describedby="emailHelp"
+            [class.is-invalid]="instituicaoForm.get('email')?.invalid && instituicaoForm.get('email')?.touched" />
+          <div id="emailHelp" class="invalid-feedback">E-mail inválido</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="senha" class="form-label">Senha</label>
+          <div class="input-group">
+            <input [type]="showPassword ? 'text' : 'password'" formControlName="senha" class="form-control" id="senha"
+              placeholder="Senha" autocomplete="new-password"
+              [class.is-invalid]="instituicaoForm.get('senha')?.invalid && instituicaoForm.get('senha')?.touched" />
+            <div class="invalid-feedback">Senha é obrigatória</div>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Endereço da Instituição -->
+      <fieldset>
+        <legend class="text-secondary">Endereço</legend>
+        <div class="row">
+          <div class="col-md-8 mb-3">
+            <label for="logradouro" class="form-label">Logradouro</label>
+            <input id="logradouro" formControlName="logradouro" type="text" class="form-control"
+              placeholder="Rua, Avenida..." />
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label for="numero" class="form-label">Número</label>
+            <input id="numero" formControlName="numero" type="text" class="form-control" placeholder="123" />
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="bairro" class="form-label">Bairro</label>
+            <input id="bairro" formControlName="bairro" type="text" class="form-control"
+              placeholder="Centro, Bairro X..." />
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="cep" class="form-label">CEP</label>
+            <input id="cep" formControlName="cep" type="text" class="form-control" placeholder="00000-000" />
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="municipio" class="form-label">Município</label>
+            <input id="municipio" formControlName="municipio" type="text" class="form-control" />
+          </div>
+
+          <div class="col-md-3 mb-3">
+            <label for="uf" class="form-label">UF</label>
+            <select id="uf" formControlName="uf" class="form-select">
+              <option *ngFor="let u of ufs" [value]="u">{{ u }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-3 mb-3">
+            <label for="pais" class="form-label">País</label>
+            <select id="pais" formControlName="pais" class="form-select">
+              <option *ngFor="let p of paises" [value]="p">{{ p }}</option>
+            </select>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Ações -->
+      <div class="d-grid gap-2 mt-4">
+        <button type="submit" class="btn btn-primary" [disabled]="instituicaoForm.invalid || isSubmitting">
+          <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
+          Cadastrar
+        </button>
+      </div>
+
+      <p class="text-center mt-3 mb-0">
+        Já possui uma conta?
+        <button class="btn btn-link" (click)="navigateToLogin()">Login</button>
+      </p>
+    </form>
+  </div>
+</div>

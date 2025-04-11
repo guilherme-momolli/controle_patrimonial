@@ -10,17 +10,22 @@ export class RelatorioService {
 
   constructor() {}
 
-  gerearRelatorioHardware(hardwares: Hardware[]){
+  gerarRelatorioHardware(hardwares: Hardware[]) {
     const doc = new jsPDF();
-    const logoUrl = '';
-    doc.addImage(logoUrl, 'JPEG', 10, 10, 30, 30); // (imagem, tipo, x, y, largura, altura)
-
-    // Título
-    doc.setFontSize(11);
-    doc.text('Relatório de Hardwares', 75, 20);
-
     
-    // Tabela
+    // Adiciona um logotipo (se disponível)
+    const logoUrl = ''; // Insira a imagem como Base64 ou carregue dinamicamente
+    if (logoUrl) {
+      doc.addImage(logoUrl, 'JPEG', 10, 10, 30, 30);
+    }
+
+    // Título centralizado
+    doc.setFontSize(16);
+    const titulo = 'Relatório de Hardwares';
+    const textWidth = doc.getTextWidth(titulo);
+    doc.text(titulo, (doc.internal.pageSize.width - textWidth) / 2, 20);
+
+    // Tabela de dados
     const tableData = hardwares.map(hardware => [
       hardware.id,
       hardware.codigoPatrimonial,
@@ -31,18 +36,19 @@ export class RelatorioService {
       hardware.velocidade || '-',
       hardware.capacidadeArmazenamento || '-',
       hardware.estatus || '-',
-      `R$ ${hardware.precoTotal.toFixed(2)}`
-  ]);
+      `R$ ${(hardware.precoTotal || 0).toFixed(2)}`
+    ]);
 
     autoTable(doc, {
       head: [[
-        'ID', 'Código', 'Componente', 'Número Serial', 'Modelo', 'Fabricante', 'Velocidade', 'Armazenamento', 'Estatus', 'Preço'
+        'ID', 'Código', 'Componente', 'Número Serial', 'Modelo', 'Fabricante', 
+        'Velocidade', 'Armazenamento', 'Estatus', 'Preço'
       ]],
       body: tableData,
-      startY: 50, // Define o início da tabela abaixo do título
+      startY: 50,
       theme: 'grid',
-      headStyles: { fillColor: [50, 50, 50], textColor: [255, 255, 255] }, // Fundo cinza escuro e texto branco no cabeçalho
-      styles: { fontSize: 9, cellPadding: 3, valign: 'middle', halign: 'center' }, // Fonte menor e alinhamento
+      headStyles: { fillColor: [50, 50, 50], textColor: [255, 255, 255] },
+      styles: { fontSize: 9, cellPadding: 3, valign: 'middle', halign: 'center' },
     });
 
     // Rodapé com data de emissão
@@ -51,7 +57,7 @@ export class RelatorioService {
     doc.text(`Data de emissão: ${dataAtual}`, 14, doc.internal.pageSize.height - 20);
 
     // Espaço para assinatura
-    doc.line(14, doc.internal.pageSize.height - 10, 80, doc.internal.pageSize.height - 10); // Linha para assinatura
+    doc.line(14, doc.internal.pageSize.height - 10, 80, doc.internal.pageSize.height - 10);
     doc.text('Assinatura do Responsável', 14, doc.internal.pageSize.height - 5);
 
     doc.save('relatorio_hardwares.pdf');
@@ -60,15 +66,19 @@ export class RelatorioService {
   gerarRelatorioPatrimonio(hardwaresAgrupados: { [codigoPatrimonial: string]: Hardware[] }) {
     const doc = new jsPDF();
 
-    // Adiciona um logotipo (substitua pela URL ou base64 da imagem)
-    const logoUrl = 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fpixabay.com%2Fvectors%2Fgear-wheel-icon-return-form-1715518%2F&psig=AOvVaw2NhzsfejYuiman7VlQ8SLw&ust=1741962419014000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCOD6mOuhh4wDFQAAAAAdAAAAABAE';
-    doc.addImage(logoUrl, 'JPEG', 10, 10, 30, 30); // (imagem, tipo, x, y, largura, altura)
+    // Adiciona um logotipo (se disponível)
+    const logoUrl = '';
+    if (logoUrl) {
+      doc.addImage(logoUrl, 'JPEG', 10, 10, 30, 30);
+    }
 
-    // Título
+    // Título centralizado
     doc.setFontSize(16);
-    doc.text('Relatório de Patrimônios', 75, 20);
+    const titulo = 'Relatório de Patrimônios';
+    const textWidth = doc.getTextWidth(titulo);
+    doc.text(titulo, (doc.internal.pageSize.width - textWidth) / 2, 20);
 
-    // Tabela
+    // Tabela de dados
     const tableData = Object.keys(hardwaresAgrupados).map((codigo) => [
       codigo,
       this.getComponenteNome(hardwaresAgrupados[codigo], 'Gabinete'),
@@ -80,18 +90,19 @@ export class RelatorioService {
       this.getComponenteNome(hardwaresAgrupados[codigo], 'Placa Wi-Fi'),
       this.getComponenteNome(hardwaresAgrupados[codigo], 'Processador'),
       this.getComponenteNome(hardwaresAgrupados[codigo], 'Cooler'),
-      `R$ ${this.getTotalPreco(hardwaresAgrupados[codigo]).toFixed(2)}`,
+      `R$ ${(this.getTotalPreco(hardwaresAgrupados[codigo]) || 0).toFixed(2)}`,
     ]);
 
     autoTable(doc, {
       head: [[
-        'Código', 'Gabinete', 'Armazenamento', 'Fonte', 'RAM', 'Placa Mãe', 'Vídeo', 'Wi-Fi', 'Processador', 'Cooler', 'Preço Total'
+        'Código', 'Gabinete', 'Armazenamento', 'Fonte', 'RAM', 'Placa Mãe', 
+        'Vídeo', 'Wi-Fi', 'Processador', 'Cooler', 'Preço Total'
       ]],
       body: tableData,
-      startY: 50, // Define o início da tabela abaixo do título
+      startY: 50,
       theme: 'grid',
-      headStyles: { fillColor: [50, 50, 50], textColor: [255, 255, 255] }, // Fundo cinza escuro e texto branco no cabeçalho
-      styles: { fontSize: 9, cellPadding: 3, valign: 'middle', halign: 'center' }, // Fonte menor e alinhamento
+      headStyles: { fillColor: [50, 50, 50], textColor: [255, 255, 255] },
+      styles: { fontSize: 9, cellPadding: 3, valign: 'middle', halign: 'center' },
     });
 
     // Rodapé com data de emissão
@@ -100,15 +111,14 @@ export class RelatorioService {
     doc.text(`Data de emissão: ${dataAtual}`, 14, doc.internal.pageSize.height - 20);
 
     // Espaço para assinatura
-    doc.line(14, doc.internal.pageSize.height - 10, 80, doc.internal.pageSize.height - 10); // Linha para assinatura
+    doc.line(14, doc.internal.pageSize.height - 10, 80, doc.internal.pageSize.height - 10);
     doc.text('Assinatura do Responsável', 14, doc.internal.pageSize.height - 5);
 
     doc.save('relatorio_patrimonios.pdf');
   }
 
   private getComponenteNome(hardwares: Hardware[], tipoComponente: string): string {
-    const tipoNormalizado = tipoComponente.toLowerCase().replace(/_/g, ' ');
-    const hardware = hardwares.find(h => h.componente.toLowerCase() === tipoNormalizado);
+    const hardware = hardwares.find(h => h.componente.toLowerCase() === tipoComponente.toLowerCase());
     return hardware ? `${hardware.modelo} (${hardware.fabricante})` : '-';
   }
 

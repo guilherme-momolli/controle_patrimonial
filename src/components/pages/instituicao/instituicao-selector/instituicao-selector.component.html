@@ -1,0 +1,34 @@
+<div class="container mt-5 text-light bg-dark p-4 rounded shadow">
+  <h2 class="mb-4">Selecione sua Instituição</h2>
+
+  <!-- Mensagem de erro -->
+  <div *ngIf="erro" class="alert alert-danger" role="alert">
+    {{ erro }}
+  </div>
+
+  <!-- Formulário de seleção -->
+  <div class="form-group">
+    <label for="instituicaoSelect" class="form-label">Instituição</label>
+    <select
+      id="instituicaoSelect"
+      [(ngModel)]="instituicaoSelecionadaId"
+      class="form-select rounded"
+      [disabled]="carregando || instituicoes.length === 0"
+      required
+    >
+      <option [ngValue]="null" disabled selected>Escolha uma instituição</option>
+      <option *ngFor="let inst of instituicoes" [ngValue]="inst.id">
+        {{ inst.nomeFantasia }} ({{ inst.tipoInstituicao || 'Tipo não informado' }})
+      </option>
+    </select>
+  </div>
+
+  <button
+    class="btn btn-primary mt-3 w-100 rounded d-flex justify-content-center align-items-center"
+    (click)="selecionarInstituicao()"
+    [disabled]="!instituicaoSelecionadaId || carregando"
+  >
+    <span *ngIf="carregando" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+    {{ carregando ? 'Carregando...' : 'Confirmar' }}
+  </button>
+</div>

@@ -14,8 +14,12 @@ import { AuthService } from '../../../core/services/auth/auth.service';
 export class LoginComponent {
   loginForm: FormGroup;
   errorMessage: string = '';
-
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+  
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       senha: ['', Validators.required]
@@ -23,20 +27,22 @@ export class LoginComponent {
   }
 
   navigateToCadastro() {
-    this.router.navigate(['/singup']);
+    this.router.navigate(['/signup']);
   }
+
   onSubmit() {
     if (this.loginForm.valid) {
       const { email, senha } = this.loginForm.value;
-  
       this.authService.login({ email, senha }).subscribe({
         next: (response) => {
-          if (response?.token) {
-            this.authService.setToken(response.token);
-            console.log(this.authService.getToken);
+          if (response.token) {
             this.router.navigate(['/main']);
+          } else if (Array.isArray(response.instituicoes) && response.instituicoes.length > 0) {
+            this.router.navigate(['/select_corporation'], {
+              state: { instituicoes: response.instituicoes, email }
+            });
           } else {
-            this.errorMessage = 'Erro ao fazer login, tente novamente!';
+            this.errorMessage = 'Usuário não possui instituições vinculadas.';
           }
         },
         error: () => {

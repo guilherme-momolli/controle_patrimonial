@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface User {
@@ -9,31 +9,95 @@ export interface User {
   email: string;
 }
 
+export interface InstituicaoDTO {
+  id: number;
+  nomeFantasia: string;
+  razaoSocial: string;
+}
+
+export interface AuthRequestDTO {
+  email: string;
+  senha: string;
+}
+
+export interface AuthResponseDTO {
+  token: string | null;
+  instituicoes: InstituicaoDTO[] | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class UsuarioService {
-    private apiUrl = environment.apiUrl + '/usuario';
+  private apiUrl = `${environment.apiUrl}`;
+  private usuarioUrl = `${this.apiUrl}/usuario`;
+  private authUrl = `${this.apiUrl}/auth`;
 
-    constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {}
 
-    getUsuarios(): Observable<any[]> {
-        return this.http.get<any[]>(`${this.apiUrl}/list`);
-    }
 
-    getUsuarioById(id: number): Observable<any> {
-        return this.http.get<any>(`${this.apiUrl}/list/${id}`);
-    }
-    
-    createUsuario(userData: any): Observable<any> {
-        return this.http.post(`${this.apiUrl}/create`, userData);
-    }
+  iniciarLogin(request: AuthRequestDTO): Observable<AuthResponseDTO> {
+    return this.http.post<AuthResponseDTO>(`${this.authUrl}/login`, request);
+  }
 
-    updateUsuario(usuario: any): Observable<any> {
-        return this.http.put<any>(`${this.apiUrl}/update/${usuario.id}`, usuario);
-    }
+  finalizarLogin(email: string, instituicaoId: number): Observable<AuthResponseDTO> {
+    return this.http.post<AuthResponseDTO>(`${this.authUrl}/escolher-instituicao`, {
+      email,
+      instituicaoId
+    }).pipe(
+      map((response) => {
+        if (response.token) {
+          localStorage.setItem('token', response.token); // Salva o token localmente
+        }
+        return response;
+      })
+    );
+  }
 
-    deleteUsuario(id: number): Observable<any> {
-        return this.http.delete<any>(`${this.apiUrl}/delete/${id}`);
-    }
+  logout(): void {
+    localStorage.removeItem('token');
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  // ----------- USUÁRIOS (PROTEGIDOS) -----------
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.getToken();
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+  }
+
+  getUsuarios(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.usuarioUrl}/list`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  getUsuarioById(id: number): Observable<User> {
+    return this.http.get<User>(`${this.usuarioUrl}/${id}`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  createUsuario(userData: User): Observable<User> {
+    return this.http.post<User>(`${this.usuarioUrl}/create`, userData, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  updateUsuario(id: number, usuario: User): Observable<User> {
+    return this.http.put<User>(`${this.usuarioUrl}/update/${id}`, usuario, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  deleteUsuario(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.usuarioUrl}/delete/${id}`, {
+      headers: this.getAuthHeaders()
+    });
+  }
 }

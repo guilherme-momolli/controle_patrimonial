@@ -17,21 +17,26 @@ export class HeaderComponent implements OnInit {
   constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit() {
-    this.verificarAutenticacao();
-
-    // Verifica se o modo escuro já está ativado
+    this.authService.authStatus$.subscribe(isLogged => {
+      this.isLoggedIn = isLogged;
+      if (isLogged && typeof localStorage !== 'undefined') {
+        this.usuarioNome = localStorage.getItem('usuarioNome') || 'Usuário';
+      } else {
+        this.usuarioNome = '';
+      }
+    });
+  
     if (typeof localStorage !== 'undefined' && localStorage.getItem('darkMode') === 'enabled') {
       document.body.classList.add('dark-mode');
     }
   }
-
+  
   verificarAutenticacao() {
     if (typeof localStorage !== 'undefined') {
       const token = this.authService.getToken();
       this.isLoggedIn = !!token;
 
       if (this.isLoggedIn) {
-        // Obtém o nome do usuário salvo no localStorage (caso seja armazenado no login)
         this.usuarioNome = localStorage.getItem('usuarioNome') || 'Usuário';
       }
     }

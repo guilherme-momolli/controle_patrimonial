@@ -24,7 +24,4 @@ export class ApiService {
     return this.http.post(`${this.API_URL}/create`, userData);
   }
 
-  // loginUsuario(userData: any){
-  //   return this.http.post(`${this.API_URL}/usuario/login`, userData);
-  // }
 }

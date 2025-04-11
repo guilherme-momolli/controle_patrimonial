@@ -249,7 +249,7 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
   }
 
   gerarRelatorio(): void {
-    this.relatorioService.gerearRelatorioHardware(this.hardwares);
+    this.relatorioService.gerarRelatorioHardware(this.hardwares);
   }
 
   abrirImagemModal(imagemUrl?: string): void {
