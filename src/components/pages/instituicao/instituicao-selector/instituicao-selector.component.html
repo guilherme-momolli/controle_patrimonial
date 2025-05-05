@@ -7,28 +7,28 @@
   </div>
 
   <!-- Formulário de seleção -->
-  <div class="form-group">
-    <label for="instituicaoSelect" class="form-label">Instituição</label>
-    <select
-      id="instituicaoSelect"
-      [(ngModel)]="instituicaoSelecionadaId"
-      class="form-select rounded"
-      [disabled]="carregando || instituicoes.length === 0"
-      required
-    >
-      <option [ngValue]="null" disabled selected>Escolha uma instituição</option>
-      <option *ngFor="let inst of instituicoes" [ngValue]="inst.id">
-        {{ inst.nomeFantasia }} ({{ inst.tipoInstituicao || 'Tipo não informado' }})
-      </option>
-    </select>
-  </div>
+  <div class="container mt-5">
+    <div class="card shadow p-4 rounded">
+      <h3 class="mb-4">Selecione a Instituição</h3>
 
-  <button
-    class="btn btn-primary mt-3 w-100 rounded d-flex justify-content-center align-items-center"
-    (click)="selecionarInstituicao()"
-    [disabled]="!instituicaoSelecionadaId || carregando"
-  >
-    <span *ngIf="carregando" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-    {{ carregando ? 'Carregando...' : 'Confirmar' }}
-  </button>
+      <form (ngSubmit)="selecionarInstituicao()">
+        <div class="mb-3">
+          <label for="instituicao" class="form-label">Instituição</label>
+          <select id="instituicao" class="form-select" [(ngModel)]="instituicaoSelecionadaId" name="instituicao"
+            required>
+            <option [ngValue]="null" disabled>Selecione uma instituição</option>
+            <option *ngFor="let inst of instituicoes" [ngValue]="inst.id">
+              {{ inst.nomeFantasia }}
+            </option>
+          </select>
+
+        </div>
+
+        <button type="submit" class="btn btn-primary" [disabled]="carregando">
+          <span *ngIf="carregando" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          {{ carregando ? 'Entrando...' : 'Entrar' }}
+        </button>
+      </form>
+    </div>
+  </div>
 </div>

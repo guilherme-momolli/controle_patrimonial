@@ -1,6 +1,7 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from '../../../core/services/auth/auth.service';
 
 @Component({
@@ -10,69 +11,76 @@ import { AuthService } from '../../../core/services/auth/auth.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   usuarioNome: string = '';
+  nomeInstituicao: string | null = null;
 
-  constructor(private router: Router, private authService: AuthService) {}
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
 
   ngOnInit() {
-    this.authService.authStatus$.subscribe(isLogged => {
-      this.isLoggedIn = isLogged;
-      if (isLogged && typeof localStorage !== 'undefined') {
-        this.usuarioNome = localStorage.getItem('usuarioNome') || 'Usuário';
-      } else {
-        this.usuarioNome = '';
-      }
-    });
+    this.authService.authStatus$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(isLogged => {
+        this.isLoggedIn = isLogged;
+        isLogged ? this.carregarDadosUsuario() : this.resetarDadosUsuario();
+      });
   
-    if (typeof localStorage !== 'undefined' && localStorage.getItem('darkMode') === 'enabled') {
-      document.body.classList.add('dark-mode');
-    }
-  }
-  
-  verificarAutenticacao() {
-    if (typeof localStorage !== 'undefined') {
-      const token = this.authService.getToken();
-      this.isLoggedIn = !!token;
-
-      if (this.isLoggedIn) {
-        this.usuarioNome = localStorage.getItem('usuarioNome') || 'Usuário';
-      }
-    }
+    this.aplicarModoEscuro();
   }
 
-  navigateTo(route: string) {
-    this.router.navigate([route]);
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  logout() {
+    this.authService.logout();
+  }
+
+  toggleDarkMode() {
+    const darkModeAtivo = document.body.classList.toggle('dark-mode');
+    localStorage.setItem('darkMode', darkModeAtivo ? 'enabled' : '');
   }
 
   closeDropdown(event: Event) {
     event.stopPropagation();
-    let dropdown = document.querySelector('.dropdown-menu.show');
-    if (dropdown) {
-      dropdown.classList.remove('show');
+    const dropdown = (event.currentTarget as HTMLElement).closest('.dropdown');
+    const menu = dropdown?.querySelector('.dropdown-menu.show');
+    menu?.classList.remove('show');
+  }
+
+  // 🔽 PRIVADOS
+
+  private carregarDadosUsuario() {
+    this.usuarioNome = this.authService.getUsuarioNome() || 'Usuário';
+  
+    this.nomeInstituicao = this.authService.getInstituicaoNome();
+    console.log('🏛️ Nome da instituição carregado do AuthService:', this.nomeInstituicao);
+  }
+
+  private resetarDadosUsuario() {
+    this.usuarioNome = '';
+    this.nomeInstituicao = null;
+  }
+
+  private aplicarModoEscuro() {
+    if (this.isModoEscuroHabilitado()) {
+      document.body.classList.add('dark-mode');
     }
   }
 
-  logout() {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('usuarioNome'); // Remove o nome do usuário
-      this.isLoggedIn = false;
-      this.usuarioNome = ''; // Limpa o nome do usuário
-      this.router.navigate(['/login']); // Redireciona para login
+  private isModoEscuroHabilitado(): boolean {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('darkMode') === 'enabled';
     }
+    return false;
   }
 
-  toggleDarkMode() {
-    if (typeof localStorage !== 'undefined') {
-      document.body.classList.toggle('dark-mode');
-
-      if (document.body.classList.contains('dark-mode')) {
-        localStorage.setItem('darkMode', 'enabled');
-      } else {
-        localStorage.removeItem('darkMode');
-      }
-    }
-  }
 }

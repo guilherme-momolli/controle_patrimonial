@@ -14,6 +14,7 @@ import { AuthService } from '../../../core/services/auth/auth.service';
 export class LoginComponent {
   loginForm: FormGroup;
   errorMessage: string = '';
+  carregando = false;
   
   constructor(
     private fb: FormBuilder,
@@ -31,24 +32,35 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    if (this.loginForm.valid) {
+    if (this.loginForm.valid && !this.carregando) {
+      this.carregando = true;
       const { email, senha } = this.loginForm.value;
       this.authService.login({ email, senha }).subscribe({
         next: (response) => {
-          if (response.token) {
-            this.router.navigate(['/main']);
-          } else if (Array.isArray(response.instituicoes) && response.instituicoes.length > 0) {
+          if (response.instituicoes && response.instituicoes.length > 1) {
             this.router.navigate(['/select_corporation'], {
-              state: { instituicoes: response.instituicoes, email }
+              state: {
+                instituicoes: response.instituicoes,
+                email: email
+              }
+            });
+          } else if (response.instituicoes && response.instituicoes.length === 1) {
+            this.authService.finalizarLogin({
+              email: email,
+              instituicaoId: response.instituicoes[0].id
+            }).subscribe({
+              next: () => this.router.navigate(['/main']),
+              error: (err) => console.error('Erro ao finalizar login automático:', err)
             });
           } else {
-            this.errorMessage = 'Usuário não possui instituições vinculadas.';
+            console.error('Nenhuma instituição vinculada.');
           }
         },
-        error: () => {
-          this.errorMessage = 'Email ou senha inválidos!';
+        error: (err) => {
+          console.error('Erro no login:', err);
         }
-      });
+      });      
     }
   }
+  
 }

@@ -31,9 +31,11 @@
         <div class="invalid-feedback">Senha obrigatória</div>
       </div>
 
-      <button type="submit" class="btn btn-primary w-100" [disabled]="loginForm.invalid">
-        Entrar
+      <button [disabled]="carregando" type="submit" class="btn btn-primary w-100">
+        <span *ngIf="carregando" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        {{ carregando ? 'Entrando...' : 'Entrar' }}
       </button>
+      
 
       <p class="text-center mt-3 mb-0">
         Não tem uma conta?
@@ -41,7 +43,7 @@
       </p>
     </form>
 
-    <p *ngIf="errorMessage" class="text-danger text-center mt-2 mb-0">
+    <p *ngIf="errorMessage" class="text-danger text-center mt-2 mb-0" aria-live="polite">
       {{ errorMessage }}
     </p>
   </div>

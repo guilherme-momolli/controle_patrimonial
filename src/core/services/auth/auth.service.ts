@@ -1,103 +1,159 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, tap } from 'rxjs';
-import { isPlatformBrowser } from '@angular/common';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import { jwtDecode } from 'jwt-decode';
+import { StorageService } from '../storage-service/storage-service.service';
 
-export interface Instituicao {
+interface AuthRequestDTO {
+  email: string;
+  senha: string;
+}
+
+export interface InstituicaoSimples {
   id: number;
   nomeFantasia: string;
 }
 
-export interface AuthResponse {
-  token?: string;
-  instituicoes?: Instituicao[];
+
+interface FinalizarLoginDTO {
+  email: string;
+  instituicaoId: number;
 }
 
+interface AuthResponseDTO {
+  token: string;
+  usuarioNome: string,
+  instituicoes?: InstituicaoSimples[];
+}
+
+
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class AuthService {
-  private readonly TOKEN_KEY = 'token';
-  private readonly apiUrl = `${environment.apiUrl}/auth`;
+  private authStatus = new BehaviorSubject<boolean>(this.tokenExiste());
+  authStatus$ = this.authStatus.asObservable();
 
-  private authStatusSubject = new BehaviorSubject<boolean>(this.hasValidToken());
-  authStatus$ = this.authStatusSubject.asObservable();
+  private baseUrl = `${environment.apiUrl}/auth`;
 
   constructor(
     private http: HttpClient,
-    @Inject(PLATFORM_ID) private platformId: object
-  ) {}
+    private router: Router,
+    private storage: StorageService
+  ) { }
 
-  login(credentials: { email: string; senha: string }): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials);
+  private isBrowser(): boolean {
+    return typeof window !== 'undefined' && typeof localStorage !== 'undefined';
   }
 
-  finalizarLogin(email: string, instituicaoId: number): Observable<AuthResponse> {
-    return this.http
-      .post<AuthResponse>(`${this.apiUrl}/finalizar-login`, { email, instituicaoId })
-      .pipe(
-        tap(response => {
-          if (response?.token) {
-            this.setToken(response.token);
-            this.authStatusSubject.next(true);
-          }
-        })
-      );
+  login(request: AuthRequestDTO): Observable<AuthResponseDTO> {
+    console.log("entrando no login", 'email', request.email)
+    this.storage.setItem('email', request.email);
+    return this.http.post<AuthResponseDTO>(`${this.baseUrl}/login`, request).pipe(
+      tap(response => {
+        if (response.token) {
+          this.salvarToken(response.token);
+          this.storage.setItem('email', request.email);
+          this.authStatus.next(true);
+        }
+
+        if (response.instituicoes) {
+          this.salvarInstituicoes(response.instituicoes);
+        }
+      })
+    );
   }
 
-  setToken(token: string): void {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem(this.TOKEN_KEY, token);
-    }
+  finalizarLogin(request: FinalizarLoginDTO): Observable<AuthResponseDTO> {
+    return this.http.post<AuthResponseDTO>(`${this.baseUrl}/finalizar-login`, request).pipe(
+      tap(response => {
+        this.salvarToken(response.token);
+        this.storage.setItem('instituicaoId', request.instituicaoId);
+        this.storage.setItem('email', request.email);
+        this.storage.setItem('usuarioNome', response.usuarioNome);
+        this.authStatus.next(true);
+      })
+    );
+  }
+
+  logout(): void {
+    this.storage.removeItem('authToken');
+    this.storage.removeItem('instituicaoId');
+    this.storage.removeItem('instituicoes');
+    this.storage.removeItem('email');
+    this.authStatus.next(false);
+    this.router.navigate(['/login']);
+  }
+
+  getAuthHeaders(): HttpHeaders {
+    const token = this.getToken();
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
   }
 
   getToken(): string | null {
-    return isPlatformBrowser(this.platformId)
-      ? localStorage.getItem(this.TOKEN_KEY)
-      : null;
+    return this.storage.getItem<string>('authToken');
   }
 
-  hasValidToken(): boolean {
-    const token = this.getToken();
-    if (!token) return false;
+  getInstituicoes(): { id: number; nomeFantasia: string }[] | null {
+    return this.storage.getItem<{ id: number; nomeFantasia: string }[]>('instituicoes');
+  }
 
+  getUsuarioNome(): string | null {
+    const payload = this.decodeToken();
+    return payload?.usuarioNome ?? null;
+  }
+
+  getInstituicaoNome(): string | null {
+    const payload = this.decodeToken();
+    return payload?.instituicaoNome ?? null;
+  }
+
+  getEmail(): string | null {
+    return this.storage.getItem<string>('email');
+  }
+
+  private salvarInstituicoes(instituicoes: { id: number; nomeFantasia: string }[]): void {
+    this.storage.setItem('instituicoes', instituicoes);
+  }
+
+  isAuthenticated(): boolean {
+    return this.tokenExiste();
+  }
+
+  getInstituicaoId(): number | null {
+    const payload = this.decodeToken();
+    return payload?.instituicaoId ?? null;
+  }
+
+  private salvarToken(token: string): void {
+    this.storage.setItem('authToken', token);
+  }
+
+  private tokenExiste(): boolean {
     try {
-      const decoded: any = jwtDecode(token);
-      return decoded.exp * 1000 > Date.now();
-    } catch {
+      return this.isBrowser() && !!localStorage.getItem('authToken');
+    } catch (e) {
+      console.error('Erro ao verificar token existente:', e);
       return false;
     }
   }
 
-  isAuthenticated(): boolean {
-    return this.hasValidToken();
-  }
-
-  getDecodedToken(): any | null {
+  private decodeToken(): any | null {
     const token = this.getToken();
     if (!token) return null;
 
     try {
-      return jwtDecode(token);
-    } catch {
+      const payloadBase64 = token.split('.')[1];
+      if (!payloadBase64) return null;
+
+      const decoded = atob(payloadBase64);
+      return JSON.parse(decoded);
+    } catch (error) {
+      console.error('Erro ao decodificar token JWT:', error);
       return null;
-    }
-  }
-
-  getUsuarioId(): number | null {
-    return this.getDecodedToken()?.id ?? null;
-  }
-
-  getInstituicaoId(): number | null {
-    return this.getDecodedToken()?.instituicaoId ?? null;
-  }
-
-  logout(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem(this.TOKEN_KEY);
-      this.authStatusSubject.next(false);
     }
   }
 }

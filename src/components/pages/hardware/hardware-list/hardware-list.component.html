@@ -1,22 +1,21 @@
 <div class="container mt-4">
-  <h2 class="text-center mb-3">Lista de Hardwares</h2>
+  <h2 class="text-center mb-4">Lista de Hardwares</h2>
 
-  <!-- Contêiner com rolagem -->
   <div class="table-responsive">
-    <table class="table table-dark table-striped table-bordered table-hover text-center">
+    <table class="table table-dark table-striped table-bordered text-center align-middle">
       <thead class="table-primary">
         <tr>
           <th>ID</th>
           <th>Imagem</th>
-          <th>Código Patrimonial</th>
+          <th>Código</th>
           <th>Componente</th>
-          <th>Número Serial</th>
+          <th>Serial</th>
           <th>Modelo</th>
           <th>Fabricante</th>
           <th>Velocidade</th>
-          <th>Capacidade de Armazenamento</th>
-          <th>Preço Total</th>
-          <th>Estatus</th>
+          <th>Armazenamento</th>
+          <th>Preço</th>
+          <th>Status</th>
           <th>Ações</th>
         </tr>
       </thead>
@@ -25,7 +24,8 @@
           <td>{{ hardware.id }}</td>
           <td>
             <div class="image-frame" (click)="abrirImagemModal(hardware.imagemUrl)">
-              <img [src]="hardware.imagemUrl || 'assets/default-image.png'" alt="Imagem do Hardware" class="thumbnail">
+              <img [src]="hardware.imagemUrl" alt="Imagem" class="img-thumbnail" style="max-width: 70px;">
+
             </div>
           </td>
           <td>{{ hardware.codigoPatrimonial }}</td>
@@ -35,203 +35,195 @@
           <td>{{ hardware.fabricante }}</td>
           <td>{{ hardware.velocidade }} GHz</td>
           <td>{{ hardware.capacidadeArmazenamento }} GB</td>
-          <td>{{ hardware.precoTotal | currency:'BRL':'symbol':'1.2-2' }}</td>
+          <td>{{ hardware.precoTotal | currency:'BRL' }}</td>
           <td>
             <span class="badge" [ngClass]="{
-                'bg-success': hardware.estatus === 'Novo',
-                'bg-warning text-dark': hardware.estatus === 'Restaurado',
-                'bg-danger': hardware.estatus === 'Defeituoso'
-            }">
-              {{ hardware.estatus }}
-            </span>
+              'bg-success': hardware.estatus === 'Novo',
+              'bg-warning text-dark': hardware.estatus === 'Restaurado',
+              'bg-danger': hardware.estatus === 'Defeituoso'
+            }">{{ hardware.estatus }}</span>
           </td>
           <td>
-            <button class="btn btn-sm btn-outline-warning me-2" data-bs-toggle="modal" data-bs-target="#HardwareEditModal" (click)="editarHardware(hardware.id)">
-              <i class="bi bi-pencil-square"></i> Editar
-            </button>            
-            <button class="btn btn-sm btn-outline-danger" (click)="deletarHardware(hardware.id)">
-              <i class="bi bi-trash3"></i> Deletar
+            <button class="btn btn-outline-secondary" (click)="verMais(hardware.id)">
+              <i class="bi bi-three-dots-vertical">Ver mais</i>
             </button>
           </td>
         </tr>
       </tbody>
     </table>
-  </div> 
+  </div>
 
+  <!-- Paginação -->
   <pagination-controls (pageChange)="page = $event"></pagination-controls>
 
+  <!-- Ações -->
   <div class="d-flex gap-2 mt-3">
-    <button class="btn btn-primary" (click)="abrirModalCreate()" data-bs-toggle="modal" data-bs-target="#modalCreateInstance">
+    <button class="btn btn-primary" (click)="abrirModal()" data-bs-toggle="modal" data-bs-target="#modalCreateInstance">
       <i class="bi bi-clipboard-plus"></i> Cadastrar novo hardware
     </button>
-    <button class="btn btn-primary" (click)="gerarRelatorio()">
-      <i class="bi bi-card-list"></i> Gerar Relatório
+    <button class="btn btn-secondary" (click)="gerarRelatorio()">
+      <i class="bi bi-file-earmark-bar-graph"></i> Gerar Relatório
     </button>
   </div>
 </div>
 
-<div class="modal fade" id="HardwareEditModal" tabindex="-1" aria-labelledby="HardwareEditarModalLabel" aria-hidden="true">
+<!-- Modal: Imagem Ampliada -->
+<div #imagemModal class="modal fade" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header">
+        <h5 class="modal-title">Imagem do Hardware</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img [src]="imagemAmpliada" class="img-fluid" *ngIf="imagemAmpliada">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Cadastro -->
+<div class="modal fade" id="modalCreateInstance" tabindex="-1" aria-labelledby="HardwareCreateModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header bg-primary xt-dark">
-        <h5 class="modal-title" id="editarHardwareModalLabel">Editar Hardware</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Cadastro de Hardware</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        
         <div *ngIf="successMessage" class="alert alert-success text-center">{{ successMessage }}</div>
         <div *ngIf="errorMessage" class="alert alert-danger text-center">{{ errorMessage }}</div>
 
-        <form [formGroup]="hardwareForm" (ngSubmit)="salvarEdicao()">
-          <fieldset [disabled]="isSubmitting">
-            <div class="col-md-12 mb-3">
-              <label for="imagem" class="form-label"><i class="bi bi-file-earmark-arrow-up"></i>Imagem do Hardware</label>
-              <input id="imagem" type="file" class="form-control" (change)="onFileSelect($event)">
-              <div *ngIf="imagemPreview" class="mt-2">
-                <img [src]="imagemPreview" alt="Preview" class="img-thumbnail" style="max-width: 150px;">
-              </div>
+        <form [formGroup]="hardwareForm" (ngSubmit)="onSubmit()">
+          <div class="row g-3">
+            <div class="col-md-12">
+              <label class="form-label">Imagem</label>
+              <input type="file" class="form-control" (change)="selecionarImagem($event)">
+              <img *ngIf="imagemPreview" [src]="imagemPreview" class="img-thumbnail mt-2" style="max-width: 150px;">
             </div>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="codigoPatrimonial" class="form-label">Código Patrimonial</label>
-                <input id="codigoPatrimonial" formControlName="codigoPatrimonial" type="text" class="form-control">
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="componente" class="form-label">Componente</label>
-                <select id="componente" formControlName="componente" class="form-select">
-                  <option *ngFor="let item of componentes" [value]="item">{{ item }}</option>
-                </select>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="numeroSerial" class="form-label">Número Serial</label>
-                <input id="numeroSerial" formControlName="numeroSerial" type="text" class="form-control">
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="modelo" class="form-label">Modelo</label>
-                <input id="modelo" formControlName="modelo" type="text" class="form-control">
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="fabricante" class="form-label">Fabricante</label>
-                <input id="fabricante" formControlName="fabricante" type="text" class="form-control">
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="velocidade" class="form-label">Velocidade (GHz)</label>
-                <input id="velocidade" formControlName="velocidade" type="number" step="0.1" class="form-control">
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="capacidadeArmazenamento" class="form-label">Capacidade de Armazenamento (GB)</label>
-                <input id="capacidadeArmazenamento" formControlName="capacidadeArmazenamento" type="number" class="form-control">
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="precoTotal" class="form-label">Preço Total (R$)</label>
-                <input id="precoTotal" formControlName="precoTotal" type="number" min="0" step="0.01" class="form-control">
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="estatus" class="form-label">Status</label>
-                <select id="estatus" formControlName="estatus" class="form-select">
-                  <option *ngFor="let status of estatusList" [value]="status">{{ status }}</option>
-                </select>
-              </div>
-            </div>
-            <div class="d-flex justify-content-end">
-              <button type="submit" class="btn btn-warning text-dark" [disabled]="isSubmitting || hardwareForm.invalid">
-                <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
-                Salvar Alterações
-              </button>
-            </div>
-          </fieldset>
-        </form>  
-      </div>
-    </div>
-  </div>
-</div>
 
-<div class="modal fade" id="modalCreateInstance" tabindex="-1" aria-labelledby="HardwareCreateModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-  <div class="modal-content">
-    <div class="modal-header bg-primary text-white">
-      <h5 class="modal-title" id="cadastroHardwareModalLabel">Cadastro de Hardware</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-    </div>
-    <div class="modal-body">
-      
-      <div *ngIf="successMessage" class="alert alert-success text-center">{{ successMessage }}</div>
-      <div *ngIf="errorMessage" class="alert alert-danger text-center">{{ errorMessage }}</div>
-      
-      <form [formGroup]="hardwareForm" (ngSubmit)="submitForm($event)">
-        <fieldset [disabled]="isSubmitting">
-          <div class="row">
-            <div class="col-md-12 mb-3">
-              <label for="imagemCreate" class="form-label"><i class="bi bi-file-earmark-arrow-up"></i>Imagem do Hardware</label>
-              <input id="imagemCreate" type="file" class="form-control" (change)="onFileSelect($event)">
-              <div *ngIf="imagemPreview" class="mt-2">
-                <img [src]="imagemPreview" alt="Preview" class="img-thumbnail" style="max-width: 150px;">
-              </div>
+            <div class="col-md-6">
+              <label class="form-label">Código Patrimonial</label>
+              <input type="text" class="form-control" formControlName="codigoPatrimonial">
             </div>
-            <div class="col-md-6 mb-3">
-              <label for="codigoPatrimonial" class="form-label">Código Patrimonial</label>
-              <input id="codigoPatrimonial" formControlName="codigoPatrimonial" type="text" class="form-control">
-            </div>
-            <div class="col-md-6 mb-3">
-              <label for="componente" class="form-label">Componente</label>
-              <select id="componente" formControlName="componente" class="form-select">
-                <option *ngFor="let item of componentes" [value]="item">{{ item }}</option>
+
+            <div class="col-md-6">
+              <label class="form-label">Componente</label>
+              <select class="form-select" formControlName="componente">
+                <option *ngFor="let c of componentes" [value]="c">{{ c }}</option>
               </select>
             </div>
-            <div class="col-md-6 mb-3">
-              <label for="numeroSerial" class="form-label">Número Serial</label>
-              <input id="numeroSerial" formControlName="numeroSerial" type="text" class="form-control">
+
+            <div class="col-md-6">
+              <label class="form-label">Número Serial</label>
+              <input type="text" class="form-control" formControlName="numeroSerial">
             </div>
-            <div class="col-md-6 mb-3">
-              <label for="modelo" class="form-label">Modelo</label>
-              <input id="modelo" formControlName="modelo" type="text" class="form-control">
+
+            <div class="col-md-6">
+              <label class="form-label">Modelo</label>
+              <input type="text" class="form-control" formControlName="modelo">
             </div>
-            <div class="col-md-6 mb-3">
-              <label for="fabricante" class="form-label">Fabricante</label>
-              <input id="fabricante" formControlName="fabricante" type="text" class="form-control">
+
+            <div class="col-md-6">
+              <label class="form-label">Fabricante</label>
+              <input type="text" class="form-control" formControlName="fabricante">
             </div>
-            <div class="col-md-6 mb-3">
-              <label for="velocidade" class="form-label">Velocidade (GHz)</label>
-              <input id="velocidade" formControlName="velocidade" type="number" step="0.1" class="form-control">
+
+            <div class="col-md-6">
+              <label class="form-label">Velocidade (GHz)</label>
+              <input type="number" class="form-control" step="0.1" formControlName="velocidade">
             </div>
-            <div class="col-md-6 mb-3">
-              <label for="capacidadeArmazenamento" class="form-label">Capacidade de Armazenamento (GB)</label>
-              <input id="capacidadeArmazenamento" formControlName="capacidadeArmazenamento" type="number" class="form-control">
+
+            <div class="col-md-6">
+              <label class="form-label">Capacidade (GB)</label>
+              <input type="number" class="form-control" formControlName="capacidadeArmazenamento">
             </div>
-            <div class="col-md-6 mb-3">
-              <label for="precoTotal" class="form-label">Preço Total (R$)</label>
-              <input id="precoTotal" formControlName="precoTotal" type="number" min="0" step="0.01" class="form-control">
+
+            <div class="col-md-6">
+              <label class="form-label">Preço Total</label>
+              <input type="number" class="form-control" step="0.01" formControlName="precoTotal">
             </div>
-            <div class="col-md-6 mb-3">
-              <label for="estatus" class="form-label">Status</label>
-              <select id="estatus" formControlName="estatus" class="form-select">
+
+            <div class="col-md-6">
+              <label class="form-label">Status</label>
+              <select class="form-select" formControlName="estatus">
                 <option *ngFor="let status of estatusList" [value]="status">{{ status }}</option>
               </select>
             </div>
           </div>
-          <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-success" [disabled]="isSubmitting || hardwareForm.invalid">
+
+          <div class="d-flex justify-content-end mt-3">
+            <button type="submit" class="btn btn-success" [disabled]="hardwareForm.invalid || isSubmitting">
               <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
               Cadastrar
             </button>
           </div>
-        </fieldset>
-      </form>  
+        </form>
+      </div>
     </div>
   </div>
 </div>
-</div>
 
-<div #imagemModal class="modal fade" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
+<!-- Modal: Edição -->
+<div class="modal fade" tabindex="-1" #hardwareEditModal>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content bg-dark text-white">
       <div class="modal-header">
-        <h5 class="modal-title">Imagem do Hardware</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title">Detalhes do Hardware</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="fecharModal()"></button>
       </div>
-      <div class="modal-body text-center">
-        <img [src]="imagemAmpliada" *ngIf="imagemAmpliada" class="img-fluid" alt="Imagem ampliada">
-      </div>
+
+      <form [formGroup]="hardwareForm">
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Componente</label>
+              <select class="form-select" formControlName="componente" [disabled]="!modoEdicaoAtivado">
+                <option *ngFor="let c of componentes" [value]="c">{{ c }}</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Modelo</label>
+              <input type="text" class="form-control" formControlName="modelo" [disabled]="!modoEdicaoAtivado">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Fabricante</label>
+              <input type="text" class="form-control" formControlName="fabricante" [disabled]="!modoEdicaoAtivado">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Preço Total</label>
+              <input type="number" class="form-control" formControlName="precoTotal" [disabled]="!modoEdicaoAtivado">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Status</label>
+              <select class="form-select" formControlName="estatus" [disabled]="!modoEdicaoAtivado">
+                <option *ngFor="let status of estatusList" [value]="status">{{ status }}</option>
+              </select>
+            </div>
+
+            <div class="col-md-12">
+              <label class="form-label">Imagem</label>
+              <img *ngIf="imagemPreview" [src]="imagemPreview" class="img-fluid mb-2" style="max-height: 200px;">
+              <input type="file" class="form-control" (change)="selecionarImagem($event)" [disabled]="!modoEdicaoAtivado">
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <!-- <ng-container *ngIf="!modoEdicaoAtivado">
+            <button type="button" class="btn btn-primary" (click)="habilitarEdicao()">Edição</button>
+          </ng-container> -->
+          <ng-container *ngIf="modoEdicaoAtivado">
+            <!-- <button type="button" class ="btn btn-danger" (click)="deletarHardware()"><i class="bi bi-trash"></i> Deletar</button> -->
+            <button type="button" class="btn btn-success" (click)="salvarEdicao()"><i class="bi bi-save"></i> Salvar</button>
+            <button type="button" class="btn btn-secondary" (click)="cancelarEdicao()"><i class="bi bi-x-circle"></i> Cancelar</button>
+          </ng-container>
+        </div>
+      </form>
     </div>
   </div>
 </div>

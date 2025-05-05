@@ -13,16 +13,17 @@ import { HardwareListComponent } from '../components/pages/hardware/hardware-lis
 import { ContatoComponent } from '../components/pages/contato/contato.component';
 import { InstituicaoCreateComponent } from '../components/pages/instituicao/instituicao-create/instituicao-create.component';
 import { InstituicaoSelectorComponent } from '../components/pages/instituicao/instituicao-selector/instituicao-selector.component';
+import { NoAuthGuard } from '../core/services/auth/no-auth.guard';
 
 export const routes: Routes = [
-  { path: '', component: LandingPageComponent },
-  { path: 'signup', component: InstituicaoCreateComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'select_corporation', component: InstituicaoSelectorComponent},
+  { path: '', component: LandingPageComponent, canActivate: [NoAuthGuard]},
+  { path: 'signup', component: InstituicaoCreateComponent, canActivate: [NoAuthGuard]},
+  { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard] },
+  { path: 'select_corporation', component: InstituicaoSelectorComponent, canActivate: [NoAuthGuard]},
   { path: 'main',component: MainComponent, canActivate: [AuthGuard] },
-  { path: 'usuario_list', component: UsuarioComponent },
-  { path: 'hardware_list', component: HardwareListComponent },
-  { path: 'patrimonio_list', component: PatrimonioListComponent },
+  { path: 'usuario_list', component: UsuarioComponent, canActivate: [AuthGuard] },
+  { path: 'hardware_list', component: HardwareListComponent, canActivate: [AuthGuard] },
+  { path: 'patrimonio_list', component: PatrimonioListComponent, canActivate: [AuthGuard] },
   { path: 'contato', component: ContatoComponent },
   { path: '**', component: NotFoundComponent }
 ];

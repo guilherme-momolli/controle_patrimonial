@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import { Instituicao } from '../instituicao/instituicao.service';
 
 export interface Hardware {
   id: number;
@@ -18,6 +19,9 @@ export interface Hardware {
   estatus: string;
   voltagem: number;
   imagemUrl?: string;
+  instituicao: {
+    id: number;
+  };
 }
 
 @Injectable({
@@ -29,6 +33,7 @@ export class HardwareService {
 
   constructor(private http: HttpClient) {}
 
+  
   getHardwares(): Observable<Hardware[]> {
     return this.http.get<Hardware[]>(`${this.apiUrl}/list`).pipe(catchError(this.handleError));
   }
@@ -37,9 +42,9 @@ export class HardwareService {
     return this.http.get<Hardware>(`${this.apiUrl}/list/${id}`).pipe(catchError(this.handleError));
   }
 
-  getHardwareByInstituicao(instituicaoId: number): Observable<Hardware> {
-    return this.http.get<Hardware>(`${this.apiUrl}/instituicao/${instituicaoId}`).pipe(catchError(this.handleError))
-  }
+  getHardwareByInstituicao(instituicaoId: number): Observable<Hardware[]> {
+    return this.http.get<Hardware[]>(`${this.apiUrl}/instituicao/${instituicaoId}`).pipe(catchError(this.handleError));
+  }  
 
   getHardwareByCodigoPatrimonial(codigoPatrimonial: string): Observable<Hardware> {
     return this.http.get<Hardware>(`${this.apiUrl}/list/patrimonio/${codigoPatrimonial}`).pipe(catchError(this.handleError));
@@ -55,9 +60,14 @@ export class HardwareService {
   }
 
   /** Atualiza um hardware existente */
-  updateHardware(id: number, hardware: Hardware, imagem?: File): Observable<Hardware> {
-    const formData = this.prepareFormData(hardware, imagem);
-    return this.http.put<Hardware>(`${this.apiUrl}/update/${id}`, formData).pipe(catchError(this.handleError));
+  updateHardware(id: number, hardware: Hardware, file?: File): Observable<Hardware> {
+    const formData = new FormData();
+    formData.append('hardware', new Blob([JSON.stringify(hardware)], { type: 'application/json' }));
+    if (file) {
+      formData.append('file', file);
+    }
+  
+    return this.http.put<Hardware>(`${this.apiUrl}/update/${id}`, formData);
   }
 
   /** Exclui um hardware */
@@ -80,9 +90,15 @@ export class HardwareService {
   /** Obtém a URL da imagem associada a um hardware pelo ID */
   getImagemUrlById(id: number): Observable<string> {
     return this.getHardwareById(id).pipe(
-      map(hardware => (hardware.imagemUrl ? `${this.fileUrl}/getFile/${hardware.imagemUrl}` : 'assets/default-image.png')),
+      map(hardware => (hardware.imagemUrl && hardware.imagemUrl.startsWith('http')
+        ? hardware.imagemUrl
+        : `${this.fileUrl}/getFile/${hardware.imagemUrl}`)),
       catchError(this.handleError)
     );
+  }
+
+  hasImagem(hardware: Hardware): boolean {
+    return !!hardware.imagemUrl;
   }
 
   getImagemUrl(imagemUrl?: string): string {

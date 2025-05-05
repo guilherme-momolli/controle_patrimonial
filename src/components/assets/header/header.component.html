@@ -1,7 +1,8 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
   <div class="container-fluid">
-    <a class="navbar-brand" routerLink="/">
-      <i class="bi bi-box-seam"></i> Controle Patrimonial
+    <a class="navbar-brand d-flex align-items-center" routerLink="/">
+      <img src="../images/Syspatrimon.png" alt="Sys Patrimon" width="30" height="30" class="d-inline-block align-text-top me-2">
+     Sys Patrimon
     </a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,58 +22,51 @@
           </a>
         </li>
 
-        <!-- Se estiver logado, exibe a barra de Patrimônio -->
         <li class="nav-item dropdown" *ngIf="isLoggedIn">
-          <div class="dropdown">
-            <a class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true">
-              <i class="bi bi-building"></i> Módulos
-            </a>
-            <ul class="dropdown-menu dropdown-menu-dark">
-              <li><h6 class="dropdown-header">Módulos</h6></li>
-              <li><a class="dropdown-item" routerLink="/hardware_list" (click)="closeDropdown($event)">
-                <i class="bi bi-pc-display"></i> Hardwares
-              </a></li>
-              <li><a class="dropdown-item" routerLink="/cadastrar_veiculo" (click)="closeDropdown($event)">
-                <i class="bi bi-car-front"></i> Veiculos
-              </a></li>
-              <li><a class="dropdown-item" routerLink="/patrimonio_list" (click)="closeDropdown($event)">
-                <i class="bi bi-archive"></i> Patrimônios Gerais
-              </a></li>
-            </ul>
-          </div>
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-building"></i> Módulos
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark">
+            <li><h6 class="dropdown-header">Módulos</h6></li>
+            <li><a class="dropdown-item" routerLink="/hardware_list" (click)="closeDropdown($event)">
+              <i class="bi bi-pc-display"></i> Hardwares
+            </a></li>
+            <li><a class="dropdown-item" routerLink="/cadastrar_veiculo" (click)="closeDropdown($event)">
+              <i class="bi bi-car-front"></i> Veículos
+            </a></li>
+            <li><a class="dropdown-item" routerLink="/patrimonio_list" (click)="closeDropdown($event)">
+              <i class="bi bi-archive"></i> Patrimônios Gerais
+            </a></li>
+          </ul>
         </li>
       </ul>
 
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item dropdown">
-          <div class="dropdown">
-            <a class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true">
-              <i class="bi bi-person"></i> {{ isLoggedIn ? usuarioNome : 'Usuário' }}
-            </a>
-            <ul class="dropdown-menu dropdown-menu-dark">
-              <li *ngIf="isLoggedIn">
-                <h6 class="dropdown-header">Usuário</h6>
-                <a class="dropdown-item" routerLink="/usuario_list" (click)="closeDropdown($event)">
-                  <i class="bi bi-person-lines-fill"></i> Listar Usuário
-                </a>
-                <a class="dropdown-item" (click)="logout()">
-                  <i class="bi bi-arrow-bar-left"></i> Logout
-                </a>
-              </li>
-              <li *ngIf="!isLoggedIn">
-                <a class="dropdown-item" routerLink="/login">
-                  <i class="bi bi-box-arrow-in-right"></i> Login
-                </a>
-                <a class="dropdown-item" routerLink="/singup">
-                  <i class="bi bi-person-plus"></i> Cadastrar
-                </a>
-              </li>
-            </ul>
-          </div>
+      <ul class="navbar-nav ms-auto align-items-center">
+        <!-- Usuário -->
+        <li class="nav-item dropdown" *ngIf="isLoggedIn">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person"></i> {{ usuarioNome }}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark">
+            <li class="dropdown-header">
+              <strong>{{ nomeInstituicao }}</strong>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" routerLink="/usuario_list" (click)="closeDropdown($event)">
+              <i class="bi bi-person-lines-fill"></i> Listar Usuário
+            </a></li>
+            <li><a class="dropdown-item" (click)="logout()">
+              <i class="bi bi-arrow-bar-left"></i> Logout
+            </a></li>
+          </ul>
         </li>
-        <button class="btn btn-outline-light ms-2" (click)="toggleDarkMode()">
-          <i class="bi bi-moon-stars"></i> Modo Escuro
-        </button>
+
+        <!-- Botão Modo Escuro -->
+        <li class="nav-item ms-2">
+          <button class="btn btn-outline-light btn-sm d-flex align-items-center" type="button" (click)="toggleDarkMode()">
+            <i class="bi bi-moon-stars me-1"></i> Modo Escuro
+          </button>
+        </li>
       </ul>
     </div>
   </div>

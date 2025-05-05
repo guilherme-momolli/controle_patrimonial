@@ -6,6 +6,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { Hardware, HardwareService } from '../../../../core/services/hardware/hardware.service';
 import { RelatorioService } from '../../../../core/services/relatorio/relatorio.service';
 import { Componente, Estatus } from '../hardware.enum';
+import { AuthService } from '../../../../core/services/auth/auth.service';
 
 declare var bootstrap: any;
 
@@ -18,7 +19,7 @@ declare var bootstrap: any;
 })
 export class HardwareListComponent implements OnInit, AfterViewInit {
   hardwareForm: FormGroup;
-  hardwareSelecionado: any;
+  hardwareSelecionado?: Hardware;
   hardwares: Hardware[] = [];
   isSubmitting = false;
   successMessage: string | null = null;
@@ -27,6 +28,8 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
   imagemArquivo: File | null = null;
   imagemUrl?: string | null;
   selectedFile?: File;
+  modoEdicaoAtivado: boolean = false;
+  editandoHardwareId: number | null = null;
 
   componentes = Object.values(Componente);
   estatusList = Object.values(Estatus);
@@ -48,7 +51,8 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private hardwareService: HardwareService,
     private router: Router,
-    private relatorioService: RelatorioService
+    private relatorioService: RelatorioService,
+    private authService: AuthService
   ) {
     this.hardwareForm = this.fb.group({
       id: [null],
@@ -61,21 +65,12 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
       capacidadeArmazenamento: [''],
       precoTotal: ['', [Validators.required, Validators.min(0)]],
       estatus: ['', Validators.required],
-      imagemUrl: ['']
+      imagemUrl: [''],
+      instituicao: ['']
     });
-  }
-
-  onFileSelect(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.imagemArquivo = input.files[0];
-
-      const reader = new FileReader();
-      reader.onload = (e: ProgressEvent<FileReader>) => {
-        this.imagemPreview = e.target?.result as string;
-      };
-      reader.readAsDataURL(this.imagemArquivo);
-    }
+    this.imagemPreview = null;
+    this.imagemArquivo = null;
+    this.selectedFile = undefined;
   }
 
   ngOnInit(): void {
@@ -90,34 +85,42 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
       this.modalEditInstance = new bootstrap.Modal(this.hardwareEditModal.nativeElement);
     }
     if (this.imagemModal) {
-    this.modalImagemInstance = new bootstrap.Modal(this.imagemModal.nativeElement);
+      this.modalImagemInstance = new bootstrap.Modal(this.imagemModal.nativeElement);
     }
   }
 
   carregarHardwares(): void {
-    this.hardwareService.getHardwares().subscribe({
+    const instituicaoId = this.authService.getInstituicaoId();
+  
+    if (!instituicaoId) {
+      console.warn('ID da instituição não encontrado. Usuário pode não estar autenticado.');
+      return;
+    }
+  
+    this.hardwareService.getHardwareByInstituicao(instituicaoId).subscribe({
       next: (data) => {
         this.hardwares = data.map(hardware => ({
           ...hardware,
           imagemUrl: 'assets/default-image.png'
         }));
-
+        
+  
         this.hardwares.forEach(hardware => {
           this.hardwareService.getImagemUrlById(hardware.id).subscribe({
             next: (url) => {
               hardware.imagemUrl = url;
             },
             error: (error) => {
-              console.error(`Erro ao obter a URL da imagem do hardware ID ${hardware.id}:`, error);
+              console.error(`Erro ao obter imagem do hardware ${hardware.id}:`, error);
             }
           });
         });
       },
       error: (error) => {
-        console.error('Erro ao buscar hardwares:', error);
+        console.error('Erro ao buscar hardwares da instituição:', error);
       }
     });
-  }
+  }  
 
   deletarHardware(id: number): void {
     if (confirm('Tem certeza que deseja excluir este hardware?')) {
@@ -173,45 +176,18 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
       complete: () => {
         this.isSubmitting = false;
         this.modalEditInstance.hide();
-        this.hardwareForm.reset();
-        this.imagemPreview = null;
-        this.imagemArquivo = null;
-
-
+        this.resetForm();
       }
     });
   }
 
-  onSubmit() {
-    if (this.hardwareForm.valid) {
-      const hardware: Hardware = this.hardwareForm.value;
-      const imagem: File | undefined = this.imagemArquivo || undefined; // Garante que não seja null
-
-      this.hardwareService.createHardware(hardware, imagem).subscribe({
-        next: (novoHardware) => {
-          console.log('Hardware cadastrado com sucesso!', novoHardware);
-          this.successMessage = 'Hardware cadastrado com sucesso!';
-          this.hardwares.push(novoHardware);
-          this.imagemUrl = this.hardwareService.getImagemUrl(novoHardware.imagemUrl);
-
-          this.hardwareForm.reset();
-          this.imagemPreview = null;
-          this.imagemArquivo = null;
-
-        },
-        error: (error) => {
-          console.error('Erro ao cadastrar hardware:', error);
-          this.errorMessage = 'Erro ao cadastrar hardware!';
-        },
-      });
+  onSubmit(event?: Event): void {
+    if (event) {
+      event.preventDefault();
     }
-  }
-
-  submitForm(event: Event): void {
-    event.preventDefault();
 
     if (this.hardwareForm.invalid || this.isSubmitting) {
-      console.warn('Formulário inválido');
+      console.warn('Formulário inválido ou já em submissão');
       return;
     }
 
@@ -221,8 +197,9 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
 
     const hardwareData: Hardware = {
       ...this.hardwareForm.value,
-      componente: this.hardwareForm.value.componente.toUpperCase(),
-      estatus: this.hardwareForm.value.estatus.toUpperCase(),
+      instituicao: {
+        id: this.authService.getInstituicaoId()
+      }
     };
 
     const imagem: File | undefined = this.imagemArquivo || undefined;
@@ -233,10 +210,7 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
         this.successMessage = 'Hardware cadastrado com sucesso!';
         this.hardwares.push(hardwareCriado);
         this.imagemUrl = this.hardwareService.getImagemUrl(hardwareCriado.imagemUrl);
-
-        this.hardwareForm.reset();
-        this.imagemPreview = null;
-        this.imagemArquivo = null;
+        this.resetForm();
       },
       error: (erro) => {
         console.error('Erro ao cadastrar hardware!', erro);
@@ -254,40 +228,29 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
 
   abrirImagemModal(imagemUrl?: string): void {
     console.log("Imagem recebida:", imagemUrl);
-  
+
     if (imagemUrl) {
-      // Verifica se a URL já contém "http" para evitar duplicação
       this.imagemAmpliada = imagemUrl.startsWith('http') ? imagemUrl : this.hardwareService.getImagemUrl(imagemUrl);
     } else {
       this.imagemAmpliada = 'assets/default-image.png';
     }
-  
+
     console.log("Imagem final para exibição:", this.imagemAmpliada);
     this.modalImagemInstance.show();
   }
-  
 
   fecharImagemModal(): void {
     this.modalImagemInstance.hide();
     this.imagemAmpliada = null;
   }
 
-  abrirModalCreate(): void {
-    this.hardwareForm.reset();
-    this.imagemPreview = null;
-    this.imagemArquivo = null;
-    this.selectedFile = undefined;
-
+  abrirModal(): void {
+    this.resetForm();
     this.modalCreateInstance.show();
   }
 
-  fecharModalCreate(): void {
-    this.hardwareForm.reset();
-    this.imagemPreview = null;
-    this.imagemArquivo = null;
-    this.selectedFile = undefined;
-
-    this.modalCreateInstance.hide();
+  fecharModal(): void {
+    this.resetForm();
   }
 
   selecionarImagem(event: Event): void {
@@ -300,5 +263,32 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
       };
       reader.readAsDataURL(this.imagemArquivo);
     }
+  }
+
+  cancelarEdicao(): void {
+    this.hardwareForm.reset();
+    this.imagemPreview = null;
+    this.imagemArquivo = null;
+    this.selectedFile = undefined;
+    this.editandoHardwareId = null;
+    this.modoEdicaoAtivado = false;
+
+    if (this.modalEditInstance) {
+      this.modalEditInstance.hide();
+    }
+
+    console.log('Edição cancelada');
+  }
+
+  verMais(hardwareId: number): void {
+    this.editandoHardwareId = hardwareId;
+    this.editarHardware(hardwareId);
+  }
+
+  resetForm(): void {
+    this.hardwareForm.reset();
+    this.imagemPreview = null;
+    this.imagemArquivo = null;
+    this.selectedFile = undefined;
   }
 }

@@ -11,17 +11,15 @@ import { FormsModule } from '@angular/forms';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideClientHydration(),
-    provideHttpClient(withFetch(), withInterceptorsFromDi()),
+    provideHttpClient(withFetch()),
     importProvidersFrom(FormsModule),
     {
-      provide: HTTP_INTERCEPTORS, 
-      useClass: AuthInterceptor, 
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
       multi: true
     },
   ],
-  
 };
