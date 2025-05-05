@@ -13,7 +13,7 @@ import { FooterComponent } from "../components/assets/footer/footer.component";
   styleUrl: './app.component.css',
   template: '<div [innerHTML]="htmlContent"></div>',
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit {
   title = 'controle_patrimonial';
   toggleDarkMode() {
     if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
@@ -34,4 +34,6 @@ export class AppComponent implements OnInit{
       }
     }
   }
+
+
 }

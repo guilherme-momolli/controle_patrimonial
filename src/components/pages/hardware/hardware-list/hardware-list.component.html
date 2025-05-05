@@ -3,7 +3,7 @@
 
   <div class="table-responsive">
     <table class="table table-dark table-striped table-bordered text-center align-middle">
-      <thead class="table-primary">
+      <thead class="table-dark">
         <tr>
           <th>ID</th>
           <th>Imagem</th>
@@ -53,10 +53,8 @@
     </table>
   </div>
 
-  <!-- Paginação -->
   <pagination-controls (pageChange)="page = $event"></pagination-controls>
 
-  <!-- Ações -->
   <div class="d-flex gap-2 mt-3">
     <button class="btn btn-primary" (click)="abrirModal()" data-bs-toggle="modal" data-bs-target="#modalCreateInstance">
       <i class="bi bi-clipboard-plus"></i> Cadastrar novo hardware
@@ -83,7 +81,8 @@
 </div>
 
 <!-- Modal: Cadastro -->
-<div class="modal fade" id="modalCreateInstance" tabindex="-1" aria-labelledby="HardwareCreateModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalCreateInstance" tabindex="-1" aria-labelledby="HardwareCreateModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content bg-dark text-white">
       <div class="modal-header bg-primary text-white">
@@ -164,66 +163,94 @@
   </div>
 </div>
 
-<!-- Modal: Edição -->
-<div class="modal fade" tabindex="-1" #hardwareEditModal>
+<div class="modal fade" id="modalEditInstance" tabindex="-1" #hardwareEditModal aria-labelledby="HardwareEditModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content bg-dark text-white">
-      <div class="modal-header">
-        <h5 class="modal-title">Detalhes do Hardware</h5>
-        <button type="button" class="btn-close btn-close-white" (click)="fecharModal()"></button>
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Cadastro de Hardware</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
+      <div class="modal-body">
+        <div *ngIf="successMessage" class="alert alert-success text-center">{{ successMessage }}</div>
+        <div *ngIf="errorMessage" class="alert alert-danger text-center">{{ errorMessage }}</div>
 
-      <form [formGroup]="hardwareForm">
-        <div class="modal-body">
+        <form [formGroup]="hardwareForm" (ngSubmit)="onSubmit()">
           <div class="row g-3">
             <div class="col-md-6">
+              <label class="form-label">Código Patrimonial</label>
+              <input type="text" class="form-control" formControlName="codigoPatrimonial">
+            </div>
+
+            <div class="col-md-6">
               <label class="form-label">Componente</label>
-              <select class="form-select" formControlName="componente" [disabled]="!modoEdicaoAtivado">
+              <select class="form-select" formControlName="componente">
                 <option *ngFor="let c of componentes" [value]="c">{{ c }}</option>
               </select>
             </div>
 
             <div class="col-md-6">
+              <label class="form-label">Número Serial</label>
+              <input type="text" class="form-control" formControlName="numeroSerial">
+            </div>
+
+            <div class="col-md-6">
               <label class="form-label">Modelo</label>
-              <input type="text" class="form-control" formControlName="modelo" [disabled]="!modoEdicaoAtivado">
+              <input type="text" class="form-control" formControlName="modelo">
             </div>
 
             <div class="col-md-6">
               <label class="form-label">Fabricante</label>
-              <input type="text" class="form-control" formControlName="fabricante" [disabled]="!modoEdicaoAtivado">
+              <input type="text" class="form-control" formControlName="fabricante">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Velocidade (GHz)</label>
+              <input type="number" class="form-control" step="0.1" formControlName="velocidade">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Capacidade (GB)</label>
+              <input type="number" class="form-control" formControlName="capacidadeArmazenamento">
             </div>
 
             <div class="col-md-6">
               <label class="form-label">Preço Total</label>
-              <input type="number" class="form-control" formControlName="precoTotal" [disabled]="!modoEdicaoAtivado">
+              <input type="number" class="form-control" step="0.01" formControlName="precoTotal">
             </div>
 
             <div class="col-md-6">
               <label class="form-label">Status</label>
-              <select class="form-select" formControlName="estatus" [disabled]="!modoEdicaoAtivado">
+              <select class="form-select" formControlName="estatus">
                 <option *ngFor="let status of estatusList" [value]="status">{{ status }}</option>
               </select>
             </div>
 
             <div class="col-md-12">
               <label class="form-label">Imagem</label>
-              <img *ngIf="imagemPreview" [src]="imagemPreview" class="img-fluid mb-2" style="max-height: 200px;">
-              <input type="file" class="form-control" (change)="selecionarImagem($event)" [disabled]="!modoEdicaoAtivado">
+              <input type="file" class="form-control" (change)="selecionarImagem($event)">
+              <img *ngIf="imagemPreview" [src]="imagemPreview" class="img-thumbnail mt-2" style="max-width: 150px;">
             </div>
           </div>
-        </div>
-
-        <div class="modal-footer">
-          <!-- <ng-container *ngIf="!modoEdicaoAtivado">
-            <button type="button" class="btn btn-primary" (click)="habilitarEdicao()">Edição</button>
-          </ng-container> -->
-          <ng-container *ngIf="modoEdicaoAtivado">
-            <!-- <button type="button" class ="btn btn-danger" (click)="deletarHardware()"><i class="bi bi-trash"></i> Deletar</button> -->
-            <button type="button" class="btn btn-success" (click)="salvarEdicao()"><i class="bi bi-save"></i> Salvar</button>
-            <button type="button" class="btn btn-secondary" (click)="cancelarEdicao()"><i class="bi bi-x-circle"></i> Cancelar</button>
-          </ng-container>
-        </div>
-      </form>
+          <div class="modal-footer">
+            <div *ngIf="!modoEdicaoAtivado" class="d-flex justify-content-start w-100">
+              <button type="button" class="btn btn-primary" (click)="habilitarEdicao()"><i class="bi bi-pencil-square"></i> Edição </button>
+            </div>
+          
+            <div *ngIf="modoEdicaoAtivado" class="d-flex justify-content-end w-100 gap-2">
+              <button class="btn btn-danger" (click)="deletarHardware(hardwareSelecionado?.id)">
+                <i class="bi bi-trash"></i> Excluir Hardware
+              </button>
+              <button type="button" class="btn btn-success" (click)="salvarEdicao()">
+                <i class="bi bi-save"></i> Salvar
+              </button>
+              <button type="button" class="btn btn-secondary" (click)="cancelarEdicao()">
+                <i class="bi bi-x-circle"></i> Cancelar
+              </button>
+            </div>
+          </div>          
+        </form>
+      </div>
     </div>
   </div>
 </div>

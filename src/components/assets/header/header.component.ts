@@ -40,6 +40,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+
   logout() {
     this.authService.logout();
   }
@@ -59,10 +60,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   // 🔽 PRIVADOS
 
   private carregarDadosUsuario() {
-    this.usuarioNome = this.authService.getUsuarioNome() || 'Usuário';
-  
+    this.usuarioNome = this.authService.getUsuarioNome() || 'Usuário';  
     this.nomeInstituicao = this.authService.getInstituicaoNome();
-    console.log('🏛️ Nome da instituição carregado do AuthService:', this.nomeInstituicao);
   }
 
   private resetarDadosUsuario() {

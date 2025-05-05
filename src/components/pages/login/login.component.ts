@@ -39,28 +39,36 @@ export class LoginComponent {
         next: (response) => {
           if (response.instituicoes && response.instituicoes.length > 1) {
             this.router.navigate(['/select_corporation'], {
-              state: {
-                instituicoes: response.instituicoes,
-                email: email
-              }
+              state: { instituicoes: response.instituicoes, email }
             });
+            this.carregando = false;
           } else if (response.instituicoes && response.instituicoes.length === 1) {
             this.authService.finalizarLogin({
-              email: email,
+              email,
               instituicaoId: response.instituicoes[0].id
             }).subscribe({
-              next: () => this.router.navigate(['/main']),
-              error: (err) => console.error('Erro ao finalizar login automático:', err)
+              next: () => {
+                this.router.navigate(['/main']);
+                this.carregando = false;
+              },
+              error: (err) => {
+                
+                console.error('Erro ao finalizar login automático:', err);
+                this.carregando = false;
+              }
             });
           } else {
             console.error('Nenhuma instituição vinculada.');
+            this.carregando = false;
           }
         },
         error: (err) => {
           console.error('Erro no login:', err);
+          this.carregando = false;
         }
-      });      
+      });
     }
   }
+  
   
 }

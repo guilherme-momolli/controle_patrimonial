@@ -48,8 +48,6 @@ export class AuthService {
   }
 
   login(request: AuthRequestDTO): Observable<AuthResponseDTO> {
-    console.log("entrando no login", 'email', request.email)
-    this.storage.setItem('email', request.email);
     return this.http.post<AuthResponseDTO>(`${this.baseUrl}/login`, request).pipe(
       tap(response => {
         if (response.token) {
@@ -57,15 +55,17 @@ export class AuthService {
           this.storage.setItem('email', request.email);
           this.authStatus.next(true);
         }
-
+    
         if (response.instituicoes) {
           this.salvarInstituicoes(response.instituicoes);
         }
       })
     );
+    
   }
 
   finalizarLogin(request: FinalizarLoginDTO): Observable<AuthResponseDTO> {
+    
     return this.http.post<AuthResponseDTO>(`${this.baseUrl}/finalizar-login`, request).pipe(
       tap(response => {
         this.salvarToken(response.token);
@@ -86,32 +86,32 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  getAuthHeaders(): HttpHeaders {
+  public getAuthHeaders(): HttpHeaders {
     const token = this.getToken();
     return new HttpHeaders({
       Authorization: `Bearer ${token}`
     });
   }
 
-  getToken(): string | null {
+  public getToken(): string | null {
     return this.storage.getItem<string>('authToken');
   }
 
-  getInstituicoes(): { id: number; nomeFantasia: string }[] | null {
+  public getInstituicoes(): { id: number; nomeFantasia: string }[] | null {
     return this.storage.getItem<{ id: number; nomeFantasia: string }[]>('instituicoes');
   }
 
-  getUsuarioNome(): string | null {
+  public getUsuarioNome(): string | null {
     const payload = this.decodeToken();
     return payload?.usuarioNome ?? null;
   }
 
-  getInstituicaoNome(): string | null {
+  public getInstituicaoNome(): string | null {
     const payload = this.decodeToken();
     return payload?.instituicaoNome ?? null;
   }
 
-  getEmail(): string | null {
+  public getEmail(): string | null {
     return this.storage.getItem<string>('email');
   }
 
@@ -119,17 +119,18 @@ export class AuthService {
     this.storage.setItem('instituicoes', instituicoes);
   }
 
-  isAuthenticated(): boolean {
+  public isAuthenticated(): boolean {
     return this.tokenExiste();
   }
 
-  getInstituicaoId(): number | null {
+  public getInstituicaoId(): number | null {
     const payload = this.decodeToken();
     return payload?.instituicaoId ?? null;
   }
 
   private salvarToken(token: string): void {
     this.storage.setItem('authToken', token);
+    this.authStatus.next(true);
   }
 
   private tokenExiste(): boolean {
@@ -144,16 +145,24 @@ export class AuthService {
   private decodeToken(): any | null {
     const token = this.getToken();
     if (!token) return null;
-
+  
     try {
       const payloadBase64 = token.split('.')[1];
       if (!payloadBase64) return null;
-
-      const decoded = atob(payloadBase64);
+  
+      const decoded = decodeURIComponent(
+        escape(atob(payloadBase64))
+      );
+  
       return JSON.parse(decoded);
     } catch (error) {
       console.error('Erro ao decodificar token JWT:', error);
       return null;
     }
   }
+  
+
+  
+  
+
 }

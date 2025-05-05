@@ -5,6 +5,8 @@ import { Injectable } from '@angular/core';
 })
 export class StorageService {
 
+  
+
   private isLocalStorageAvailable(): boolean {
     try {
       return typeof window !== 'undefined' && !!window.localStorage;
@@ -53,4 +55,7 @@ export class StorageService {
   exists(key: string): boolean {
     return this.isLocalStorageAvailable() && localStorage.getItem(key) !== null;
   }
+
+
+  
 }

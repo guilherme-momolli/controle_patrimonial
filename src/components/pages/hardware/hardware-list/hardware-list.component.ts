@@ -122,11 +122,17 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
     });
   }  
 
-  deletarHardware(id: number): void {
+  deletarHardware(id: number | undefined): void {
+    if (id === undefined) {
+      console.error('ID inválido: undefined');
+      return;
+    }
+  
     if (confirm('Tem certeza que deseja excluir este hardware?')) {
       this.hardwareService.deleteHardware(id).subscribe(
         () => {
           this.hardwares = this.hardwares.filter(hardware => hardware.id !== id);
+          this.modalEditInstance.hide();
         },
         (error) => {
           console.error('Erro ao deletar hardware', error);
@@ -134,6 +140,8 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
       );
     }
   }
+  
+  
 
   editarHardware(hardwareId: number) {
     this.hardwareService.getHardwareById(hardwareId).subscribe((hardware) => {
@@ -239,6 +247,10 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
     this.modalImagemInstance.show();
   }
 
+  habilitarEdicao(): void{
+    this.modoEdicaoAtivado = true;
+  }
+
   fecharImagemModal(): void {
     this.modalImagemInstance.hide();
     this.imagemAmpliada = null;
@@ -247,10 +259,6 @@ export class HardwareListComponent implements OnInit, AfterViewInit {
   abrirModal(): void {
     this.resetForm();
     this.modalCreateInstance.show();
-  }
-
-  fecharModal(): void {
-    this.resetForm();
   }
 
   selecionarImagem(event: Event): void {

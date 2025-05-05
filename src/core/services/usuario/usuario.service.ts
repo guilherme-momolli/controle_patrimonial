@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, catchError, map, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../auth/auth.service';
 
 export interface User {
-  id: number;
+  id: number;              
   nome: string;
   email: string;
+  senha: string;
+  instituicao: { id: number };  
+  permissao: string;           
 }
-
 export interface InstituicaoDTO {
   id: number;
   nomeFantasia: string;
@@ -50,21 +52,28 @@ export class UsuarioService {
   
 
   getUsuarioById(id: number): Observable<User> {
-    return this.http.get<User>(`${this.usuarioUrl}/${id}`, {
+    return this.http.get<User>(`${this.usuarioUrl}/list/${id}`, {
       headers: this.auth.getAuthHeaders()
     });
   }
+
 
   createUsuario(userData: User): Observable<User> {
     return this.http.post<User>(`${this.usuarioUrl}/create`, userData, {
       headers: this.auth.getAuthHeaders()
-    });
+    }).pipe(
+      catchError(error => {
+        console.error('Erro no serviço de usuário', error);
+        return throwError(() => error);
+      })
+    );
   }
 
+  
+
   updateUsuario(id: number, usuario: User): Observable<User> {
-    return this.http.put<User>(`${this.usuarioUrl}/update/${id}`, usuario, {
-      headers: this.auth.getAuthHeaders()
-    });
+    const formData = new FormData();    
+      return this.http.put<User>(`${this.apiUrl}/update/${id}`, formData);
   }
 
   deleteUsuario(id: number): Observable<void> {
@@ -72,4 +81,6 @@ export class UsuarioService {
       headers: this.auth.getAuthHeaders()
     });
   }
+
+  
 }
